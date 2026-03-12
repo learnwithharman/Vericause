@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 97%;
+    --foreground: 224 30% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 224 30% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 30% 12%;
+
+    --primary: 238 60% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 16% 93%;
+    --secondary-foreground: 224 30% 12%;
+
+    --muted: 220 16% 93%;
+    --muted-foreground: 220 10% 46%;
+
+    --accent: 160 60% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 16% 90%;
+    --input: 220 16% 90%;
+    --ring: 238 60% 55%;
+
+    --radius: 0.75rem;
+
+    --emerald: 160 60% 45%;
+    --emerald-foreground: 0 0% 100%;
+    --indigo: 238 60% 55%;
+    --indigo-light: 238 80% 70%;
+    --sky: 200 80% 55%;
+
+    --glass: 0 0% 100% / 0.7;
+    --glass-border: 0 0% 100% / 0.2;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 224 30% 12%;
+    --sidebar-primary: 238 60% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 16% 95%;
+    --sidebar-accent-foreground: 224 30% 12%;
+    --sidebar-border: 220 16% 90%;
+    --sidebar-ring: 238 60% 55%;
+  }
+
+  .dark {
+    --background: 224 30% 6%;
+    --foreground: 220 20% 95%;
+
+    --card: 224 25% 10%;
+    --card-foreground: 220 20% 95%;
+
+    --popover: 224 25% 10%;
+    --popover-foreground: 220 20% 95%;
+
+    --primary: 238 70% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 224 20% 16%;
+    --secondary-foreground: 220 20% 95%;
+
+    --muted: 224 20% 16%;
+    --muted-foreground: 220 10% 55%;
+
+    --accent: 160 60% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 224 20% 18%;
+    --input: 224 20% 18%;
+    --ring: 238 70% 65%;
+
+    --emerald: 160 60% 45%;
+    --emerald-foreground: 0 0% 100%;
+    --indigo: 238 70% 65%;
+    --indigo-light: 238 80% 75%;
+    --sky: 200 80% 60%;
+
+    --glass: 224 25% 10% / 0.7;
+    --glass-border: 0 0% 100% / 0.08;
+
+    --sidebar-background: 224 25% 10%;
+    --sidebar-foreground: 220 20% 95%;
+    --sidebar-primary: 238 70% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 224 20% 16%;
+    --sidebar-accent-foreground: 220 20% 95%;
+    --sidebar-border: 224 20% 18%;
+    --sidebar-ring: 238 70% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-card/70 backdrop-blur-xl border border-border/50 shadow-lg;
+  }
+  .glass-panel-dark {
+    @apply bg-card/50 backdrop-blur-xl border border-border/30;
+  }
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--indigo)), hsl(var(--sky)));
+  }
+  .gradient-accent {
+    background: linear-gradient(135deg, hsl(var(--emerald)), hsl(var(--sky)));
+  }
+  .gradient-hero {
+    background: linear-gradient(135deg, hsl(238 60% 55% / 0.08), hsl(160 60% 45% / 0.05), hsl(200 80% 55% / 0.08));
+  }
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--indigo)), hsl(var(--sky)));
+  }
+  .hover-lift {
+    @apply transition-all duration-300 ease-out;
+  }
+  .hover-lift:hover {
+    @apply -translate-y-1 shadow-xl;
+  }
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent 0%, hsl(var(--primary) / 0.1) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  .trust-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+    background: hsl(var(--emerald) / 0.12);
+    color: hsl(var(--emerald));
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
