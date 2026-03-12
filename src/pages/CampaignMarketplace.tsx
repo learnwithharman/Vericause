@@ -2,74 +2,125 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CampaignCard } from "@/components/CampaignCard";
 import { campaigns } from "@/data/campaigns";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Search } from "lucide-react";
+import { Search, Filter, SlidersHorizontal, ArrowRight } from "lucide-react";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
-const categories = ["All", "Water", "Education", "Emergency", "Environment", "Healthcare", "Social"];
+const categories = ["All Registry", "Water", "Education", "Emergency", "Environment", "Health", "Social"];
 
 export default function CampaignMarketplace() {
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState("All Registry");
 
   const filtered = campaigns.filter(c => {
     const matchSearch = c.title.toLowerCase().includes(search.toLowerCase()) || c.org.toLowerCase().includes(search.toLowerCase());
-    const matchCat = category === "All" || c.category === category;
+    const matchCat = category === "All Registry" || c.category === category;
     return matchSearch && matchCat;
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background selection:bg-primary/10">
       <Navbar />
-      <div className="pt-24 pb-20">
-        <div className="container mx-auto px-4 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl mb-10">
-            <h1 className="text-3xl md:text-4xl font-bold">Explore Campaigns</h1>
-            <p className="mt-2 text-muted-foreground">Discover verified campaigns creating real-world impact.</p>
-          </motion.div>
+      
+      <main className="pt-40 pb-32">
+        <div className="container mx-auto px-6 max-w-7xl">
+          {/* Marketplace Header */}
+          <div className="max-w-3xl mb-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-4">
+                <Globe className="w-4 h-4" /> 
+                Global Impact Registry
+              </div>
+              <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tighter text-foreground mb-6">
+                Active Campaigns
+              </h1>
+              <p className="text-xl font-medium text-slate-500 max-w-xl leading-relaxed">
+                A verified directory of high-impact philanthropic initiatives, audited for radical transparency and operational efficiency.
+              </p>
+            </motion.div>
+          </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search campaigns..."
+          {/* Precision Controls */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-16">
+            <div className="relative flex-1 max-w-lg">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              <input
+                placeholder="Search by project name or entity..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="pl-10"
+                className="h-14 w-full pl-12 pr-6 rounded-2xl bg-slate-50 border border-border/40 text-[13px] font-semibold focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all outline-none"
               />
             </div>
-            <div className="flex gap-2 flex-wrap">
+            
+            <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none">
+              <div className="flex items-center gap-2 mr-4 bg-slate-50 px-4 py-2 rounded-xl border border-border/40">
+                <SlidersHorizontal className="w-4 h-4 text-slate-400" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Filter By</span>
+              </div>
               {categories.map(cat => (
-                <Button
+                <button
                   key={cat}
-                  variant={category === cat ? "default" : "outline"}
-                  size="sm"
                   onClick={() => setCategory(cat)}
-                  className={category === cat ? "gradient-primary text-primary-foreground border-0" : ""}
+                  className={`h-11 px-6 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
+                    category === cat 
+                      ? "bg-primary text-white shadow-lg shadow-primary/20" 
+                      : "bg-white border border-border/40 text-slate-500 hover:border-primary/20 hover:text-primary"
+                  }`}
                 >
                   {cat}
-                </Button>
+                </button>
               ))}
             </div>
           </div>
 
-          {filtered.length > 0 ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((c, i) => (
-                <CampaignCard key={c.id} campaign={c} index={i} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-20">
-              <p className="text-muted-foreground">No campaigns found matching your criteria.</p>
-            </div>
-          )}
+          {/* Results Grid */}
+          <AnimatePresence mode="wait">
+            {filtered.length > 0 ? (
+              <motion.div 
+                key="grid"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10"
+              >
+                {filtered.map((c, i) => (
+                  <CampaignCard key={c.id} campaign={c} index={i} />
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div 
+                key="empty"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex flex-col items-center justify-center py-32 text-center"
+              >
+                <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center mb-6 text-slate-300">
+                  <Search className="w-8 h-8" />
+                </div>
+                <h3 className="text-2xl font-bold tracking-tight mb-2">Registry Mismatch</h3>
+                <p className="text-slate-500 max-w-xs mx-auto">
+                  No active campaigns match your current parameters. Try widening your search or category selection.
+                </p>
+                <button 
+                  onClick={() => { setSearch(""); setCategory("All Registry"); }}
+                  className="mt-8 text-primary font-bold uppercase tracking-widest text-[10px] flex items-center gap-2 hover:opacity-70 transition-opacity"
+                >
+                  Reset Parameters <ArrowRight className="w-3 h-3" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
+      </main>
+
       <Footer />
     </div>
   );
 }
+
+import { Globe as LucideGlobe } from "lucide-react";
+function Globe(props: any) { return <LucideGlobe {...props} />; }

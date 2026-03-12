@@ -26,3 +26,6 @@ dist-ssr
 # Bun
 bun.lock
 bun.lockb
+
+# Lint output
+lint_output.txt

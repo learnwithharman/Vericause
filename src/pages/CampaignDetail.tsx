@@ -5,22 +5,36 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { campaigns } from "@/data/campaigns";
-import { useParams } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ShieldCheck, Users, Clock, Heart, Star, AlertTriangle, Camera, FileText, MapPin } from "lucide-react";
+import { useParams, Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { ShieldCheck, Users, Clock, Heart, Star, MapPin, ChevronRight, Share2, Info, CheckCircle2, ArrowRight, BarChart3, Globe, Zap } from "lucide-react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 const impactUpdates = [
-  { date: "Feb 28, 2026", title: "Water pump installed in village A", type: "photo", icon: Camera, desc: "Successfully installed the first water pump serving 200+ families." },
-  { date: "Feb 15, 2026", title: "Expense report – Phase 1", type: "report", icon: FileText, desc: "Detailed breakdown of $15,000 spent on materials and labor." },
-  { date: "Jan 30, 2026", title: "Field team deployed", type: "update", icon: MapPin, desc: "Our team of 12 engineers arrived at the project site." },
+  { 
+    date: "March 05, 2026", 
+    title: "Critical Infrastructure Deployment", 
+    status: "Verified",
+    type: "Logistics",
+    desc: "The primary solar arrays and pump controllers have been successfully deployed. Engineering verification is complete for the first quadrant.",
+    image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=800&auto=format&fit=crop"
+  },
+  { 
+    date: "February 28, 2026", 
+    title: "Phase 1 Civil Works Complete", 
+    status: "Audited",
+    type: "Engineering",
+    desc: "Foundation work for the central water hub has reached 100% completion. Structural audits confirm compliance with international standards.",
+    image: "https://images.unsplash.com/photo-1541888941259-7b9f9233feaa?q=80&w=800&auto=format&fit=crop"
+  },
 ];
 
-const fundAllocation = [
-  { label: "Materials", pct: 40, color: "bg-primary" },
-  { label: "Labor", pct: 25, color: "bg-emerald" },
-  { label: "Transport", pct: 15, color: "bg-sky" },
-  { label: "Admin", pct: 10, color: "bg-muted-foreground/40" },
-  { label: "Reserve", pct: 10, color: "bg-indigo-light" },
+const fundAllocationData = [
+  { name: "Infrastructure", value: 45, color: "hsl(226 100% 50%)" },
+  { name: "Field Operations", value: 25, color: "hsl(215 100% 50%)" },
+  { name: "Verification", value: 15, color: "hsl(150 100% 35%)" },
+  { name: "Community Engagement", value: 10, color: "hsl(224 30% 12%)" },
+  { name: "Administration", value: 5, color: "hsl(210 20% 80%)" },
 ];
 
 export default function CampaignDetail() {
@@ -29,135 +43,309 @@ export default function CampaignDetail() {
   const pct = Math.round((campaign.raised / campaign.goal) * 100);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background selection:bg-primary/10">
       <Navbar />
-      <div className="pt-24 pb-20">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Left */}
-            <div className="lg:col-span-2 space-y-8">
-              <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}>
-                <div className="rounded-xl overflow-hidden h-64 md:h-80">
-                  <img src={campaign.image} alt={campaign.title} className="w-full h-full object-cover" />
+      
+      <main className="pt-40 pb-32">
+        <div className="container mx-auto px-6 max-w-7xl">
+          {/* Header Section */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="max-w-3xl"
+            >
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-6">
+                <Link to="/campaigns" className="hover:text-primary transition-colors">Registry</Link>
+                <ChevronRight className="w-3 h-3 opacity-30" />
+                <span className="text-foreground/60">{campaign.category}</span>
+                <ChevronRight className="w-3 h-3 opacity-30" />
+                <span className="text-primary">Project #{campaign.id}</span>
+              </div>
+              <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tighter text-foreground leading-[1.05] mb-8">
+                {campaign.title}
+              </h1>
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-50 border border-border/40">
+                  <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-white overflow-hidden italic">
+                    {campaign.org.charAt(0)}
+                  </div>
+                  <span className="text-sm font-semibold tracking-tight">{campaign.org}</span>
                 </div>
-                <div className="mt-6 flex items-start gap-3 flex-wrap">
-                  <Badge variant="secondary">{campaign.category}</Badge>
-                  {campaign.verified && <span className="trust-badge"><ShieldCheck className="w-3 h-3" /> Verified NGO</span>}
+                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span className="text-[11px] font-bold uppercase tracking-widest">Verified NGO</span>
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold mt-4">{campaign.title}</h1>
-                <p className="text-muted-foreground mt-1">by {campaign.org}</p>
-                <p className="mt-4 text-muted-foreground leading-relaxed">
-                  This campaign aims to bring sustainable clean water access to rural communities. Every contribution directly funds infrastructure, engineering, and community training to ensure long-term impact and self-sufficiency.
-                </p>
+              </div>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="flex gap-3"
+            >
+              <Button variant="ghost" className="rounded-full h-12 w-12 p-0 border border-border/40 hover:bg-slate-50 bg-white">
+                <Share2 className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" className="rounded-full h-12 w-12 p-0 border border-border/40 hover:bg-slate-50 bg-white">
+                <Star className="w-5 h-5" />
+              </Button>
+            </motion.div>
+          </div>
+
+          <div className="grid lg:grid-cols-12 gap-16">
+            {/* Content Column */}
+            <div className="lg:col-span-8 space-y-20">
+              {/* Cover Image Section */}
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="relative aspect-[16/10] rounded-[3rem] overflow-hidden group shadow-2xl shadow-indigo-100/50"
+              >
+                <img src={campaign.image} alt={campaign.title} className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-1000" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-10 left-10 flex gap-4">
+                  <div className="elite-glass rounded-2xl px-6 py-4 flex items-center gap-6">
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Impact Radius</span>
+                      <span className="text-xl font-display font-bold">+5,400 Lives</span>
+                    </div>
+                    <div className="w-px h-8 bg-border/20" />
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Status</span>
+                      <span className="text-xl font-display font-bold text-emerald-500">Live</span>
+                    </div>
+                  </div>
+                </div>
               </motion.div>
 
-              {/* Tabs */}
-              <Tabs defaultValue="updates" className="mt-8">
-                <TabsList className="bg-secondary">
-                  <TabsTrigger value="updates">Impact Updates</TabsTrigger>
-                  <TabsTrigger value="funds">Fund Usage</TabsTrigger>
-                  <TabsTrigger value="trust">Trust Signals</TabsTrigger>
+              {/* Description Layer */}
+              <div className="space-y-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
+                    <Info className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-2xl font-bold tracking-tight">Project Mandate</h3>
+                </div>
+                <p className="text-2xl font-medium text-slate-800 leading-snug tracking-tight">
+                  This initiative addresses immediate clean water access via high-efficiency solar infrastructure. Beyond the physical assets, we are establishing a sovereign community maintenance layer to ensure generational resilience.
+                </p>
+                <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl font-medium">
+                  Our transparent framework ensures that every unit of capital deployed is mapped to professional-grade engineering documentation and verified on-field arrival.
+                </p>
+              </div>
+
+              {/* Data Layers */}
+              <Tabs defaultValue="transparency" className="w-full">
+                <TabsList className="bg-slate-100/50 p-1.5 rounded-full border border-border/40 mb-12 inline-flex">
+                  <TabsTrigger value="transparency" className="rounded-full px-8 py-2.5 text-xs font-bold uppercase tracking-[0.1em] data-[state=active]:bg-white data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all">Transparency Protocol</TabsTrigger>
+                  <TabsTrigger value="timeline" className="rounded-full px-8 py-2.5 text-xs font-bold uppercase tracking-[0.1em] data-[state=active]:bg-white data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all">Impact Timeline</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="updates" className="mt-6 space-y-4">
-                  {impactUpdates.map((u, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="flex gap-4 p-4 rounded-xl bg-card border border-border hover-lift"
-                    >
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                        <u.icon className="w-5 h-5 text-primary" />
+                <TabsContent value="transparency" className="mt-0 space-y-12">
+                  <div className="grid md:grid-cols-2 gap-12 items-center">
+                    <div className="relative aspect-square">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={fundAllocationData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={"65%"}
+                            outerRadius={"85%"}
+                            paddingAngle={10}
+                            dataKey="value"
+                            stroke="none"
+                          >
+                            {fundAllocationData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span className="text-4xl font-display font-bold tracking-tight">100%</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Capital Audited</span>
                       </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">{u.date}</p>
-                        <p className="font-semibold text-sm mt-0.5">{u.title}</p>
-                        <p className="text-sm text-muted-foreground mt-1">{u.desc}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </TabsContent>
-
-                <TabsContent value="funds" className="mt-6">
-                  <div className="p-6 rounded-xl bg-card border border-border space-y-4">
-                    <h3 className="font-semibold">Fund Allocation</h3>
-                    <div className="flex h-4 rounded-full overflow-hidden">
-                      {fundAllocation.map((f, i) => (
-                        <div key={i} className={`${f.color} h-full`} style={{ width: `${f.pct}%` }} />
-                      ))}
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                      {fundAllocation.map((f, i) => (
-                        <div key={i} className="flex items-center gap-2 text-sm">
-                          <div className={`w-3 h-3 rounded-sm ${f.color}`} />
-                          <span className="text-muted-foreground">{f.label} ({f.pct}%)</span>
+                    
+                    <div className="space-y-3">
+                      {fundAllocationData.map((f, i) => (
+                        <div key={i} className="elite-card p-6 flex items-center justify-between group cursor-pointer hover:border-primary/20">
+                          <div className="flex items-center gap-4">
+                            <div className="w-2 h-10 rounded-full" style={{ backgroundColor: f.color }} />
+                            <div>
+                              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-1">{f.name}</p>
+                              <h5 className="font-bold text-lg">{f.value}% <span className="text-sm text-muted-foreground font-medium">Allocation</span></h5>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                         </div>
                       ))}
                     </div>
                   </div>
                 </TabsContent>
 
-                <TabsContent value="trust" className="mt-6 space-y-4">
-                  <div className="p-6 rounded-xl bg-card border border-border">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Star className="w-5 h-5 text-amber-500" />
-                      <span className="font-semibold">4.8 / 5.0 Trust Rating</span>
-                      <span className="text-sm text-muted-foreground">(128 reviews)</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">Based on donor feedback, fund usage transparency, and impact delivery.</p>
+                <TabsContent value="timeline" className="mt-0">
+                  <div className="relative pt-8 pl-12 space-y-20 before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-px before:bg-border/60">
+                    {impactUpdates.map((u, i) => (
+                      <motion.div 
+                        key={i}
+                        initial={{ opacity: 0, x: 20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                        className="relative"
+                      >
+                        <div className="absolute -left-[33px] top-1.5 w-[3px] h-[3px] rounded-full bg-primary outline outline-[8px] outline-primary/10 shadow-[0_0_20px_rgba(79,70,229,0.5)] z-10" />
+                        <div className="grid md:grid-cols-12 gap-10">
+                          <div className="md:col-span-4 space-y-4">
+                            <div className="flex items-center gap-3">
+                              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{u.date}</span>
+                              <div className="h-px w-8 bg-primary/20" />
+                            </div>
+                            <h4 className="text-2xl font-bold tracking-tight">{u.title}</h4>
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-border/40 text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+                              {u.type}
+                            </div>
+                          </div>
+                          <div className="md:col-span-8 flex flex-col md:flex-row gap-8 bg-slate-50/50 rounded-[2rem] p-8 border border-border/20">
+                            <div className="flex-1 space-y-6">
+                              <p className="text-muted-foreground leading-relaxed font-medium">{u.desc}</p>
+                              <Button variant="ghost" className="h-10 px-0 hover:bg-transparent text-primary text-[10px] font-bold uppercase tracking-widest">
+                                EXPLORE DOCUMENTATION <ArrowRight className="w-3 h-3 ml-2" />
+                              </Button>
+                            </div>
+                            <div className="w-full md:w-40 aspect-square rounded-2xl overflow-hidden shadow-lg border-4 border-white shrink-0">
+                              <img src={u.image} alt={u.title} className="w-full h-full object-cover" />
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
-                  <Button variant="outline" size="sm" className="text-destructive border-destructive/30 hover:bg-destructive/10">
-                    <AlertTriangle className="w-4 h-4 mr-1.5" /> Report Concern
-                  </Button>
                 </TabsContent>
               </Tabs>
             </div>
 
-            {/* Right – Donation Card */}
-            <div className="lg:col-span-1">
-              <motion.div
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="sticky top-24 rounded-xl bg-card border border-border p-6 space-y-5 shadow-lg"
-              >
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="font-bold text-lg">${campaign.raised.toLocaleString()}</span>
-                    <span className="text-muted-foreground">of ${campaign.goal.toLocaleString()}</span>
+            {/* Sidebar / Interaction Column */}
+            <div className="lg:col-span-4">
+              <div className="sticky top-32 space-y-8">
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  className="elite-card p-12 bg-white relative overflow-hidden ring-4 ring-primary/5"
+                >
+                  <div className="absolute top-0 inset-x-0 h-1 bg-primary" />
+                  
+                  <div className="space-y-10">
+                    <div className="flex justify-between items-end">
+                      <div className="space-y-1.5">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Commitment Goal</span>
+                        <h2 className="text-4xl font-display font-bold tracking-tighter text-foreground">${campaign.raised.toLocaleString()}</h2>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary block mb-1">{pct}%</span>
+                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-40">Funded</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                       <Progress value={pct} className="h-2 rounded-full bg-slate-100" />
+                       <p className="text-[10px] font-bold text-center text-muted-foreground uppercase tracking-[0.2em] opacity-40">Target Protocol: ${campaign.goal.toLocaleString()} USD</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-slate-50 rounded-2xl p-6 border border-border/20 text-center">
+                        <div className="text-2xl font-display font-bold text-foreground mb-1">{campaign.donors}</div>
+                        <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground">VERIFIED DONORS</div>
+                      </div>
+                      <div className="bg-slate-50 rounded-2xl p-6 border border-border/20 text-center">
+                        <div className="text-2xl font-display font-bold text-foreground mb-1">{campaign.daysLeft}</div>
+                        <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground">DAYS REMAINING</div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-6 pt-4">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-center text-foreground/40">Select Commitment Tier</p>
+                      <div className="grid grid-cols-3 gap-3">
+                        {[25, 50, 100].map(a => (
+                          <button key={a} className="h-14 rounded-2xl border border-border/40 font-bold text-base hover:border-primary hover:bg-primary/5 transition-all outline-none focus:ring-2 focus:ring-primary/20">
+                            ${a}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="relative group">
+                        <input 
+                           type="text" 
+                           placeholder="Precision commitment" 
+                           className="w-full h-14 bg-slate-50 border border-border/20 rounded-2xl px-6 text-sm font-bold focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all outline-none"
+                        />
+                        <span className="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase text-muted-foreground">USD</span>
+                      </div>
+                    </div>
+
+                    <Button size="lg" className="w-full h-16 bg-primary hover:bg-primary/90 text-white text-lg font-bold rounded-2xl shadow-xl shadow-indigo-100 group transition-all active:scale-95">
+                      Confirm Contribution <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+
+                    <div className="flex items-center justify-center gap-6 opacity-40 grayscale group-hover:grayscale-0 transition-all duration-700">
+                      <div className="flex items-center gap-1.5">
+                        <ShieldCheck className="w-3 h-3" />
+                        <span className="text-[8px] font-bold uppercase tracking-widest">TLS 1.3</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3 h-3" />
+                        <span className="text-[8px] font-bold uppercase tracking-widest">KYC READY</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Zap className="w-3 h-3" />
+                        <span className="text-[8px] font-bold uppercase tracking-widest">INSTANT</span>
+                      </div>
+                    </div>
                   </div>
-                  <Progress value={pct} className="h-2.5" />
-                  <p className="text-xs text-muted-foreground mt-1">{pct}% funded</p>
+                </motion.div>
+
+                {/* Authority Ledger */}
+                <div className="elite-card p-10 space-y-8">
+                   <div className="flex items-center justify-between">
+                     <h5 className="text-[11px] font-bold uppercase tracking-[0.2em] text-foreground">Recent Flows</h5>
+                     <div className="flex items-center gap-2">
+                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                       <span className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Protocol Live</span>
+                     </div>
+                   </div>
+                   <div className="space-y-6">
+                      {[
+                        { name: "Executive donor", amt: 2500, time: "4m ago", icon: Globe },
+                        { name: "Institutional", amt: 1200, time: "18m ago", icon: ShieldCheck },
+                        { name: "Private Angel", amt: 500, time: "1h ago", icon: Heart },
+                      ].map((d, i) => (
+                        <div key={i} className="flex items-center justify-between border-b border-border/40 pb-4 last:border-0 last:pb-0">
+                           <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400">
+                                <d.icon className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-foreground">{d.name}</p>
+                                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{d.time}</p>
+                              </div>
+                           </div>
+                           <p className="text-sm font-bold text-primary">+${d.amt.toLocaleString()}</p>
+                        </div>
+                      ))}
+                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3 text-center">
-                  <div className="p-3 rounded-lg bg-secondary">
-                    <p className="text-lg font-bold">{campaign.donors}</p>
-                    <p className="text-xs text-muted-foreground">Donors</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-secondary">
-                    <p className="text-lg font-bold">{campaign.daysLeft}</p>
-                    <p className="text-xs text-muted-foreground">Days Left</p>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm font-medium mb-2">Select Amount</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[25, 50, 100, 250, 500, 1000].map(a => (
-                      <Button key={a} variant="outline" size="sm" className="text-sm">${a}</Button>
-                    ))}
-                  </div>
-                </div>
-                <Button size="lg" className="w-full gradient-primary text-primary-foreground border-0 hover:opacity-90">
-                  <Heart className="w-4 h-4 mr-2" /> Donate Now
-                </Button>
-                <p className="text-xs text-muted-foreground text-center">Secure payment · Tax deductible</p>
-              </motion.div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
+
       <Footer />
     </div>
   );

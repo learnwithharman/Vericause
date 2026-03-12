@@ -15,6 +15,11 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Outfit', 'Inter', 'sans-serif'],
+      },
+      letterSpacing: {
+        tighter: '-0.05em',
+        tight: '-0.025em',
       },
       colors: {
         border: "hsl(var(--border))",
@@ -23,43 +28,48 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "hsl(226 100% 50%)", // High-end Digital Blue
+          foreground: "hsl(0 0% 100%)",
+          50: "hsl(226 100% 98%)",
+          100: "hsl(226 100% 95%)",
+          200: "hsl(226 100% 90%)",
+          600: "hsl(226 100% 45%)",
+          700: "hsl(226 100% 35%)",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+          DEFAULT: "hsl(210 20% 98%)",
+          foreground: "hsl(224 30% 12%)",
+        },
+        trust: {
+          emerald: "hsl(150 100% 35%)", // Deeper, more "money" green
+          "emerald-light": "hsl(150 100% 97%)",
+          blue: "hsl(215 100% 50%)",
+        },
+        slate: {
+          50: "#f8fafc",
+          100: "#f1f5f9",
+          200: "#e2e8f0",
+          900: "#0f172a",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "hsl(220 15% 94%)",
+          foreground: "hsl(220 10% 40%)",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "hsl(160 60% 45%)",
+          foreground: "hsl(0 0% 100%)",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-        emerald: {
-          DEFAULT: "hsl(var(--emerald))",
-          foreground: "hsl(var(--emerald-foreground))",
-        },
-        indigo: {
-          DEFAULT: "hsl(var(--indigo))",
-          light: "hsl(var(--indigo-light))",
-        },
-        sky: {
-          DEFAULT: "hsl(var(--sky))",
+          DEFAULT: "hsl(0 0% 100%)",
+          foreground: "hsl(224 30% 12%)",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -102,16 +112,29 @@ export default {
           "0%": { width: "0%" },
           "100%": { width: "var(--progress-width)" },
         },
+        "text-reveal": {
+          "0%": { transform: "translateY(100%)", opacity: "0" },
+          "100%": { transform: "translateY(0%)", opacity: "1" },
+        },
+        "border-pulse": {
+          "0%, 100%": { borderColor: "rgba(79, 70, 229, 0.1)" },
+          "50%": { borderColor: "rgba(79, 70, 229, 0.3)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.5s ease-out forwards",
-        "fade-in-up": "fade-in-up 0.6s ease-out forwards",
-        "scale-in": "scale-in 0.3s ease-out forwards",
-        "progress-fill": "progress-fill 1.5s ease-out forwards",
+        "fade-in-up": "fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "scale-in": "scale-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "progress-fill": "progress-fill 2.5s ease-in-out forwards",
+        "float": "float 8s ease-in-out infinite",
+        "pulse-subtle": "pulse-subtle 4s ease-in-out infinite",
+        "text-reveal": "text-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "border-pulse": "border-pulse 3s ease-in-out infinite",
       },
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;

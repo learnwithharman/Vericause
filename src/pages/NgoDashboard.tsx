@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { StatsCard } from "@/components/StatsCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,8 +8,8 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { motion } from "framer-motion";
-import { BarChart3, Users, FileText, PlusCircle, Upload, Eye } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { BarChart3, Users, FileText, PlusCircle, Upload, Eye, Activity, Terminal, Shield, ArrowUpRight } from "lucide-react";
 
 const ngoCampaigns = [
   { title: "Clean Water for Rural Communities", raised: 45200, goal: 60000, donors: 312, status: "Active" },
@@ -17,63 +18,103 @@ const ngoCampaigns = [
 
 export default function NgoDashboard() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background selection:bg-primary/10">
       <Navbar />
-      <div className="pt-24 pb-20">
-        <div className="container mx-auto px-4 lg:px-8">
-          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8 flex-wrap gap-4">
-            <div>
-              <h1 className="text-3xl font-bold">NGO Dashboard</h1>
-              <p className="text-muted-foreground mt-1">Manage campaigns and post impact updates.</p>
-            </div>
-            <Button className="gradient-primary text-primary-foreground border-0 hover:opacity-90">
-              <PlusCircle className="w-4 h-4 mr-2" /> New Campaign
+      
+      <main className="pt-40 pb-32">
+        <div className="container mx-auto px-6 max-w-7xl">
+          {/* Partner Header */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-4">
+                <Shield className="w-4 h-4" /> 
+                Entity Operational Layer
+              </div>
+              <h1 className="text-4xl md:text-6xl font-display font-bold tracking-tighter text-foreground leading-[1.1]">
+                Partner Command
+              </h1>
+              <p className="text-xl font-medium text-slate-500 mt-4 max-w-xl leading-relaxed">
+                Management of your philanthropic registry entries and verifiable impact documentation.
+              </p>
+            </motion.div>
+            
+            <Button className="h-14 px-8 bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold shadow-xl shadow-indigo-100 hover:shadow-2xl transition-all active:scale-95">
+              <PlusCircle className="w-5 h-5 mr-3" /> Initialize Campaign
             </Button>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-3 gap-4 mb-8">
-            <StatsCard label="Total Raised" value="$53,500" change="+18% this month" icon={BarChart3} index={0} />
-            <StatsCard label="Total Donors" value="357" icon={Users} index={1} />
-            <StatsCard label="Impact Updates" value="12" icon={FileText} index={2} />
           </div>
 
-          <Tabs defaultValue="campaigns" className="space-y-6">
-            <TabsList className="bg-secondary">
-              <TabsTrigger value="campaigns">My Campaigns</TabsTrigger>
-              <TabsTrigger value="create">Create Campaign</TabsTrigger>
-              <TabsTrigger value="updates">Post Update</TabsTrigger>
-            </TabsList>
+          {/* Operational Metrics */}
+          <div className="grid sm:grid-cols-3 gap-6 mb-16">
+            <StatsCard label="Capital Inflow" value="$53,500" change="+18.4%" icon={BarChart3} index={0} />
+            <StatsCard label="Verified Network" value="357" icon={Users} index={1} />
+            <StatsCard label="Impact Objects" value="12" change="Verifiable" icon={FileText} index={2} />
+          </div>
 
-            <TabsContent value="campaigns">
-              <div className="rounded-xl bg-card border border-border overflow-hidden">
+          {/* Interaction Matrix */}
+          <Tabs defaultValue="campaigns" className="space-y-12">
+            <div className="flex items-center justify-between border-b border-border/40 pb-1">
+              <TabsList className="bg-transparent h-auto p-0 gap-8">
+                <TabsTrigger value="campaigns" className="p-0 pb-4 rounded-none h-auto bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 transition-all outline-none">Active Matrix</TabsTrigger>
+                <TabsTrigger value="create" className="p-0 pb-4 rounded-none h-auto bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 transition-all outline-none">Deployment Protocol</TabsTrigger>
+                <TabsTrigger value="updates" className="p-0 pb-4 rounded-none h-auto bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 transition-all outline-none">Impact Telemetry</TabsTrigger>
+              </TabsList>
+            </div>
+
+            <TabsContent value="campaigns" className="mt-0 outline-none">
+              <div className="elite-card overflow-hidden">
                 <Table>
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Campaign</TableHead>
-                      <TableHead>Progress</TableHead>
-                      <TableHead>Donors</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead></TableHead>
+                    <TableRow className="bg-slate-50/50 hover:bg-slate-50/50 border-none">
+                      <TableHead className="py-6 pl-10 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Registry Entry</TableHead>
+                      <TableHead className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Allocation Flow</TableHead>
+                      <TableHead className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Entity Nodes</TableHead>
+                      <TableHead className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground text-right pr-10">Control</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {ngoCampaigns.map((c, i) => (
-                      <TableRow key={i}>
-                        <TableCell className="font-medium">{c.title}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2 min-w-[120px]">
-                            <Progress value={Math.round((c.raised / c.goal) * 100)} className="h-2 flex-1" />
-                            <span className="text-xs text-muted-foreground">{Math.round((c.raised / c.goal) * 100)}%</span>
+                      <TableRow key={i} className="group hover:bg-slate-50/30 border-border/40">
+                        <TableCell className="py-8 pl-10">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-primary italic border border-border/40 group-hover:bg-primary group-hover:text-white transition-all duration-500">{c.title.charAt(0)}</div>
+                            <span className="font-bold text-lg tracking-tight group-hover:text-primary transition-colors">{c.title}</span>
                           </div>
                         </TableCell>
-                        <TableCell>{c.donors}</TableCell>
                         <TableCell>
-                          <Badge variant={c.status === "Active" ? "default" : "secondary"} className={c.status === "Active" ? "bg-emerald/10 text-emerald border-0" : ""}>
-                            {c.status}
-                          </Badge>
+                          <div className="flex flex-col gap-2 min-w-[200px]">
+                            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                              <span>{Math.round((c.raised / c.goal) * 100)}% Funded</span>
+                              <span>Target: ${c.goal.toLocaleString()}</span>
+                            </div>
+                            <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                              <motion.div 
+                                initial={{ width: 0 }}
+                                animate={{ width: `${Math.round((c.raised / c.goal) * 100)}%` }}
+                                transition={{ duration: 1, delay: 0.5 }}
+                                className="h-full bg-primary rounded-full"
+                              />
+                            </div>
+                          </div>
                         </TableCell>
                         <TableCell>
-                          <Button variant="ghost" size="sm"><Eye className="w-4 h-4" /></Button>
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4 text-slate-300" />
+                            <span className="text-sm font-bold text-slate-600">{c.donors}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right pr-10">
+                          <div className="flex items-center justify-end gap-3">
+                            <Badge className={c.status === "Active" ? "bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-none font-bold text-[9px] uppercase tracking-widest px-3 py-1 rounded-full" : "bg-slate-100 text-slate-500 border border-border/40 font-bold text-[9px] uppercase tracking-widest px-3 py-1 rounded-full"}>
+                              {c.status}
+                            </Badge>
+                            <Button variant="ghost" size="sm" className="h-10 w-10 p-0 rounded-xl hover:bg-slate-100 transition-all">
+                              <ArrowUpRight className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -82,66 +123,114 @@ export default function NgoDashboard() {
               </div>
             </TabsContent>
 
-            <TabsContent value="create">
-              <div className="max-w-2xl rounded-xl bg-card border border-border p-6 space-y-5">
-                <h3 className="font-semibold text-lg">Create New Campaign</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium mb-1.5 block">Campaign Title</label>
-                    <Input placeholder="e.g., Clean Water for Village X" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-1.5 block">Description</label>
-                    <Textarea placeholder="Describe the campaign goals and impact..." rows={4} />
-                  </div>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium mb-1.5 block">Fundraising Goal ($)</label>
-                      <Input type="number" placeholder="50000" />
+            <TabsContent value="create" className="mt-0 outline-none">
+              <div className="grid lg:grid-cols-2 gap-12">
+                <div className="elite-card p-10 space-y-10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
+                      <Terminal className="w-5 h-5" />
                     </div>
-                    <div>
-                      <label className="text-sm font-medium mb-1.5 block">Category</label>
-                      <Input placeholder="e.g., Water, Education" />
+                    <h3 className="text-2xl font-bold tracking-tight">Initialization Protocol</h3>
+                  </div>
+                  
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1">Campaign Title</label>
+                      <input 
+                        placeholder="Project designation..." 
+                        className="h-14 w-full bg-slate-50 border border-border/20 rounded-2xl px-6 text-[13px] font-semibold focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all outline-none"
+                      />
                     </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1">Operational Mandate</label>
+                      <textarea 
+                        placeholder="Detailed mission parameters..." 
+                        rows={4}
+                        className="w-full bg-slate-50 border border-border/20 rounded-2xl p-6 text-[13px] font-semibold focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all outline-none resize-none"
+                      />
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1">Capital Goal (USD)</label>
+                        <input 
+                          type="number" 
+                          placeholder="50000" 
+                          className="h-14 w-full bg-slate-50 border border-border/20 rounded-2xl px-6 text-[13px] font-semibold focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all outline-none"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1">Registry Category</label>
+                        <input 
+                          placeholder="e.g. INFRASTRUCTURE" 
+                          className="h-14 w-full bg-slate-50 border border-border/20 rounded-2xl px-6 text-[13px] font-semibold focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button className="w-full h-16 bg-primary text-white font-bold rounded-2xl shadow-xl shadow-indigo-100 hover:shadow-2xl transition-all">
+                    Register Campaign Node
+                  </Button>
+                </div>
+                
+                <div className="elite-card p-10 flex flex-col items-center justify-center text-center space-y-6 bg-slate-50/50 border-dashed border-2">
+                  <div className="w-20 h-20 rounded-full bg-white border border-border/40 flex items-center justify-center text-slate-300 shadow-sm mb-4">
+                    <Upload className="w-8 h-8" />
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1.5 block">Campaign Images</label>
-                    <div className="border-2 border-dashed border-border rounded-lg p-8 text-center cursor-pointer hover:border-primary/50 transition-colors">
-                      <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-                      <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
-                    </div>
+                    <h4 className="text-xl font-bold tracking-tight mb-2">Evidence Objects</h4>
+                    <p className="text-sm font-medium text-slate-500 max-w-xs mx-auto">
+                      Attach satellite imagery, engineering specs, or regional verification documents.
+                    </p>
                   </div>
-                  <Button className="gradient-primary text-primary-foreground border-0 hover:opacity-90">Create Campaign</Button>
+                  <Button variant="outline" className="h-12 px-6 rounded-xl border-border/60 hover:bg-white transition-all">
+                    Browse File Registry
+                  </Button>
                 </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="updates">
-              <div className="max-w-2xl rounded-xl bg-card border border-border p-6 space-y-5">
-                <h3 className="font-semibold text-lg">Post Impact Update</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium mb-1.5 block">Update Title</label>
-                    <Input placeholder="e.g., Phase 1 Complete!" />
+            <TabsContent value="updates" className="mt-0 outline-none">
+               <div className="max-w-2xl elite-card p-10 space-y-10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <Activity className="w-5 h-5" />
                   </div>
-                  <div>
-                    <label className="text-sm font-medium mb-1.5 block">Description</label>
-                    <Textarea placeholder="Share what was accomplished..." rows={4} />
+                  <h3 className="text-2xl font-bold tracking-tight">Telemetry Injection</h3>
+                </div>
+                
+                <div className="space-y-8">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1">Update Vector</label>
+                    <input 
+                      placeholder="e.g. Infrastructure Deployment Phase 2" 
+                      className="h-14 w-full bg-slate-50 border border-border/20 rounded-2xl px-6 text-[13px] font-semibold focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all outline-none"
+                    />
                   </div>
-                  <div>
-                    <label className="text-sm font-medium mb-1.5 block">Attach Files</label>
-                    <div className="border-2 border-dashed border-border rounded-lg p-8 text-center cursor-pointer hover:border-primary/50 transition-colors">
-                      <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-                      <p className="text-sm text-muted-foreground">Photos, expense reports, field updates</p>
-                    </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground ml-1">Status Narrative</label>
+                    <textarea 
+                      placeholder="Input field telemetry..." 
+                      rows={5}
+                      className="w-full bg-slate-50 border border-border/20 rounded-2xl p-6 text-[13px] font-semibold focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all outline-none resize-none"
+                    />
                   </div>
-                  <Button className="gradient-primary text-primary-foreground border-0 hover:opacity-90">Publish Update</Button>
+                  <div className="p-8 rounded-2xl border-2 border-dashed border-border/40 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-primary/20 transition-colors">
+                    <Upload className="w-6 h-6 text-slate-300 mb-2 group-hover:text-primary transition-colors" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Attach Verifiable Evidence</span>
+                  </div>
+                  
+                  <Button className="w-full h-16 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl shadow-xl shadow-emerald-100 transition-all">
+                    Broadcast Update Node
+                  </Button>
                 </div>
               </div>
             </TabsContent>
           </Tabs>
         </div>
-      </div>
+      </main>
+      
+      <Footer />
     </div>
   );
 }
