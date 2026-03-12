@@ -17,25 +17,15 @@ const stats = [
 
 export default function LandingPage() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const zoomRef = useRef<HTMLDivElement>(null);
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
 
-  const { scrollYProgress: zoomProgress } = useScroll({
-    target: zoomRef,
-    offset: ["start end", "end start"]
-  });
-
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.1], [1, 0.95]);
-  
-  // Zoom Animation Logic
-  const zoomScale = useTransform(zoomProgress, [0.1, 0.5], [0.85, 1.05]);
-  const zoomOpacity = useTransform(zoomProgress, [0.1, 0.3], [0, 1]);
 
   return (
     <div ref={containerRef} className="relative min-h-screen bg-background text-foreground selection:bg-primary/10 transition-colors duration-700 overflow-x-hidden">
@@ -112,148 +102,6 @@ export default function LandingPage() {
           >
             <ChevronDown className="w-5 h-5 text-muted-foreground animate-bounce opacity-30" />
           </motion.div>
-        </section>
-
-        {/* High-Density Scroll Zoom - Oversight Command */}
-        <section ref={zoomRef} className="h-[120vh] relative">
-          <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
-            <motion.div 
-              style={{ scale: zoomScale, opacity: zoomOpacity }}
-              className="relative w-full max-w-5xl aspect-[16/10] rounded-[2.5rem] border border-white/20 dark:border-white/10 shadow-2xl overflow-hidden bg-slate-50 dark:bg-slate-900/80 backdrop-blur-3xl group/dash"
-            >
-              <div className="absolute inset-0 protocol-grid opacity-[0.05]" />
-              
-              {/* Dashboard Content */}
-              <div className="p-6 md:p-10 h-full flex flex-col relative z-10">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="px-3 py-1 rounded-md bg-white/50 dark:bg-white/5 border border-white/20 text-[8px] font-black tracking-widest uppercase text-muted-foreground">OVERSIGHT COMMAND V4.2</div>
-                    <div className="text-[8px] font-mono text-primary/60">NODE_ID: VC_77XC_09</div>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-12 gap-5 h-full overflow-hidden">
-                  {/* Sidebar Components */}
-                  <div className="col-span-3 space-y-4">
-                    <div className="h-20 rounded-2xl bg-white/70 dark:bg-white/5 border border-white/20 p-4 flex flex-col justify-between">
-                      <div className="flex justify-between items-center"><Shield className="w-3 h-3 text-primary" /><span className="text-[7px] font-bold text-muted-foreground uppercase">Stability</span></div>
-                      <div className="text-sm font-bold text-foreground">99.98%</div>
-                    </div>
-                    <div className="h-32 rounded-2xl bg-primary/[0.03] border border-primary/20 p-4 relative overflow-hidden">
-                       <div className="relative z-10">
-                         <div className="text-[7px] font-bold text-primary uppercase mb-2">Network Load</div>
-                         <div className="flex flex-col gap-1.5">
-                           {[60, 45, 80, 55].map((w, i) => (
-                             <div key={i} className="h-1 bg-primary/10 rounded-full overflow-hidden">
-                               <motion.div initial={{ width: 0 }} animate={{ width: `${w}%` }} transition={{ delay: 1 + i * 0.1, duration: 1.5 }} className="h-full bg-primary" />
-                             </div>
-                           ))}
-                         </div>
-                       </div>
-                    </div>
-                    <div className="h-20 rounded-2xl bg-white/70 dark:bg-white/5 border border-white/20 p-4">
-                      <div className="text-[7px] font-bold text-muted-foreground uppercase mb-1">Active Ledger</div>
-                      <div className="space-y-1">
-                        <div className="h-1 w-full bg-slate-200 dark:bg-slate-800 rounded-full" />
-                        <div className="h-1 w-2/3 bg-slate-100 dark:bg-slate-800 rounded-full" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Main Display Area */}
-                  <div className="col-span-9 h-full">
-                    <div className="h-full rounded-[2rem] bg-white/70 dark:bg-white/5 border border-white/20 p-6 flex flex-col">
-                       <div className="flex items-center justify-between mb-6">
-                         <div className="flex items-center gap-3">
-                           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><Activity className="w-5 h-5" /></div>
-                           <div className="space-y-1">
-                             <div className="text-[10px] font-bold text-foreground">Real-time Impact Stream</div>
-                             <div className="flex items-center gap-1.5"><div className="w-1 h-1 rounded-full bg-emerald-500 animate-ping" /><span className="text-[8px] text-emerald-500 font-bold uppercase tracking-widest">Live Audit</span></div>
-                           </div>
-                         </div>
-                         <div className="flex gap-2">
-                           <div className="w-12 h-6 rounded-lg bg-emerald-500/10 border border-emerald-500/20" />
-                           <div className="w-12 h-6 rounded-lg bg-primary/10 border border-primary/20" />
-                         </div>
-                       </div>
-
-                       <div className="flex-1 grid grid-cols-2 gap-4">
-                         {/* Live Allocation Feed */}
-                         <div className="rounded-2xl bg-slate-50/50 dark:bg-white/[0.02] border border-white/10 p-4 flex flex-col gap-3 overflow-hidden">
-                            <div className="text-[7px] font-bold text-primary uppercase tracking-widest opacity-70">Protocol Redirections</div>
-                            <div className="space-y-2">
-                              {[
-                                { id: "TX_4401", node: "EU_WEST_1", status: "PENDING" },
-                                { id: "TX_4402", node: "SA_SOUTH_2", status: "VERIFIED" },
-                                { id: "TX_4403", node: "AP_EAST_4", status: "REDIRECT" },
-                              ].map((tx, i) => (
-                                <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-white/5 border border-white/10 shadow-sm relative overflow-hidden group">
-                                  <div className="flex items-center gap-2 relative z-10">
-                                    <div className={`w-1 h-1 rounded-full ${tx.status === 'VERIFIED' ? 'bg-emerald-500' : 'bg-primary animate-pulse'}`} />
-                                    <div className="text-[8px] font-bold text-foreground">{tx.id}</div>
-                                  </div>
-                                  <div className="flex items-center gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
-                                    <span className="text-[6px] font-mono text-primary/60">NODE_VC</span>
-                                    <ArrowRight className="w-2 h-2 text-muted-foreground" />
-                                    <span className="text-[6px] font-mono text-foreground/70">{tx.node}</span>
-                                  </div>
-                                  <div className={`text-[6px] font-black px-1.5 py-0.5 rounded-md ${tx.status === 'VERIFIED' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-primary/10 text-primary'}`}>{tx.status}</div>
-                                </div>
-                              ))}
-                            </div>
-                         </div>
-
-                         {/* Node Topology Preview */}
-                         <div className="rounded-2xl bg-slate-50/50 dark:bg-white/[0.02] border border-white/10 p-4 relative overflow-hidden">
-                            <div className="text-[7px] font-bold text-muted-foreground uppercase mb-3">Topology Relay Map</div>
-                            <div className="relative h-full flex flex-col justify-between">
-                               <div className="relative">
-                                 <svg className="w-full h-24 opacity-20" viewBox="0 0 100 40">
-                                   <motion.path 
-                                     d="M10,20 Q30,5 50,20 T90,20" 
-                                     stroke="currentColor" 
-                                     fill="none" 
-                                     strokeWidth="0.5" 
-                                     className="text-primary"
-                                     initial={{ pathLength: 0 }}
-                                     animate={{ pathLength: 1 }}
-                                     transition={{ duration: 2, repeat: Infinity }}
-                                   />
-                                   <circle cx="10" cy="20" r="1.5" fill="currentColor" className="text-primary" />
-                                   <circle cx="50" cy="20" r="1.5" fill="currentColor" className="text-primary" />
-                                   <circle cx="90" cy="20" r="1.5" fill="currentColor" className="text-primary" />
-                                 </svg>
-                               </div>
-                               <div className="text-[6px] font-mono text-primary/40 text-right space-y-0.5 mt-auto">
-                                 <div>UPTIME: 124D 12H 09M</div>
-                                 <div>SEC_PROTOCOL: ENABLED</div>
-                                 <div className="text-primary/60">SIG: SH-256_AUTH</div>
-                               </div>
-                            </div>
-                         </div>
-                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Geometric Overlay */}
-              <div className="absolute inset-0 pointer-events-none opacity-[0.02] protocol-grid-dots" />
-            </motion.div>
-            
-            {/* Absolute Overlay Text */}
-            <motion.div 
-              style={{ opacity: useTransform(zoomProgress, [0.3, 0.4], [0, 1]) }}
-              className="absolute pointer-events-none text-center"
-            >
-              <h2 className="text-3xl md:text-5xl font-display font-black tracking-tight text-foreground shadow-sm">Complete Operational <br />Transparency.</h2>
-            </motion.div>
-          </div>
         </section>
 
         {/* Real-time Telemetry Section - Condensed */}
