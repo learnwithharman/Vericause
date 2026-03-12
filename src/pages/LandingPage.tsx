@@ -114,7 +114,7 @@ export default function LandingPage() {
               className="grid grid-cols-1 md:grid-cols-3 gap-px bg-primary/10 border border-primary/10 rounded-[2rem] overflow-hidden backdrop-blur-3xl shadow-xl"
             >
               {stats.map((s, i) => (
-                <div key={i} className="bg-white/60 dark:bg-slate-900/60 p-8 flex flex-col items-center group transition-all duration-700">
+                <div key={i} className="bg-slate-900/40 dark:bg-slate-900/60 p-8 flex flex-col items-center group transition-all duration-700">
                   <div className="w-12 h-12 rounded-xl bg-white dark:bg-white/10 mb-6 flex items-center justify-center text-primary shadow-sm group-hover:bg-primary group-hover:text-white transition-all duration-500">
                     <s.icon className="w-6 h-6" />
                   </div>
@@ -149,7 +149,7 @@ export default function LandingPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ delay: i * 0.1, duration: 0.6 }}
-                  className="elite-card p-10 group bg-white/40 dark:bg-white/5 backdrop-blur-md border-white/20 transition-all hover:scale-[1.01]"
+                  className="elite-card p-10 group bg-slate-900/40 dark:bg-white/5 backdrop-blur-md border-white/20 transition-all hover:scale-[1.01]"
                 >
                   <div className="w-14 h-14 rounded-2xl bg-white dark:bg-white/5 border border-border/50 dark:border-white/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-sm mb-8">
                     <f.icon className="w-7 h-7" />
@@ -203,7 +203,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, scale: 0.99 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="elite-card p-12 md:p-16 bg-slate-50 dark:bg-white/[0.03] border-none relative overflow-hidden group rounded-[2.5rem]"
+              className="elite-card p-12 md:p-16 bg-slate-900/80 dark:bg-white/[0.03] border-none relative overflow-hidden group rounded-[2.5rem]"
             >
               <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
               <div className="relative grid lg:grid-cols-5 gap-16 items-center text-foreground">
