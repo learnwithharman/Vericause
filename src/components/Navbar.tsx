@@ -1,17 +1,24 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, Menu, X, Globe } from "lucide-react";
+import { Moon, Sun, Menu, X, Globe, LogOut, User } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { auth } from "@/lib/api";
 
 export function Navbar() {
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(() => {
+    const saved = localStorage.getItem("vc_theme");
+    return saved === "dark";
+  });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const user = auth.currentUser();
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
+    localStorage.setItem("vc_theme", dark ? "dark" : "light");
     
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -22,10 +29,16 @@ export function Navbar() {
 
   const links = [
     { to: "/campaigns", label: "Explore" },
-    { to: "/donor-dashboard", label: "Dashboard" },
-    { to: "/admin", label: "Oversight" },
-    { to: "/ngo-dashboard", label: "NGOs" },
+    ...(user?.role === "DONOR" ? [{ to: "/donor-dashboard", label: "Dashboard" }] : []),
+    ...(user?.role === "NGO" ? [{ to: "/ngo-dashboard", label: "NGO Command" }] : []),
+    ...(user?.role === "ADMIN" ? [{ to: "/admin", label: "Oversight" }] : []),
   ];
+
+  const handleLogout = () => {
+    auth.logout();
+    navigate("/");
+    window.location.reload();
+  };
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
@@ -33,7 +46,7 @@ export function Navbar() {
     }`}>
       <div className="container mx-auto px-6">
         <div className={`mx-auto max-w-5xl flex items-center justify-between px-6 py-2.5 rounded-full transition-all duration-500 ${
-          scrolled ? "elite-glass shadow-lg" : "bg-transparent border-transparent"
+          scrolled ? "nav-glass shadow-lg" : "bg-transparent border-transparent"
         }`}>
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center gap-2 group relative">
@@ -87,13 +100,28 @@ export function Navbar() {
             
             <div className="h-4 w-px bg-border/60 mx-2 hidden sm:block" />
 
-            <Button asChild size="sm" variant="ghost" className="hidden sm:inline-flex text-[13px] font-semibold px-5 h-9 rounded-full text-muted-foreground hover:text-foreground">
-              <Link to="/auth">Sign In</Link>
-            </Button>
-            
-            <Button size="sm" className="hidden sm:inline-flex bg-primary hover:bg-primary/90 text-white text-[13px] font-bold px-6 h-9 rounded-full shadow-md shadow-indigo-100 hover:shadow-lg transition-all active:scale-95 group">
-              Join Now <motion.span initial={{ x: 0 }} group-hover={{ x: 3 }} transition={{ duration: 0.3 }}><X className="w-3 h-3 ml-1.5 rotate-45" /></motion.span>
-            </Button>
+            {user ? (
+              <div className="flex items-center gap-2">
+                <Button asChild size="sm" variant="ghost" className="hidden sm:inline-flex text-[12px] font-bold px-4 h-9 rounded-full text-foreground gap-2">
+                  <Link to={user.role === "NGO" ? "/ngo-dashboard" : user.role === "ADMIN" ? "/admin" : "/donor-dashboard"}>
+                    <User className="w-4 h-4 text-primary" /> {user.name.split(' ')[0]}
+                  </Link>
+                </Button>
+                <Button onClick={handleLogout} size="sm" variant="outline" className="hidden sm:inline-flex border-border/40 text-muted-foreground hover:text-red-500 hover:border-red-100 hover:bg-red-50 text-[11px] font-bold px-4 h-9 rounded-full transition-all">
+                  <LogOut className="w-3.5 h-3.5 mr-2" /> LOGOUT
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Button asChild size="sm" variant="ghost" className="hidden sm:inline-flex text-[13px] font-semibold px-5 h-9 rounded-full text-muted-foreground hover:text-foreground">
+                  <Link to="/auth">Sign In</Link>
+                </Button>
+                
+                <Button asChild size="sm" className="hidden sm:inline-flex bg-primary hover:bg-primary/90 text-white text-[13px] font-bold px-6 h-9 rounded-full shadow-md shadow-indigo-100 hover:shadow-lg transition-all active:scale-95 group">
+                  <Link to="/auth">Join Now</Link>
+                </Button>
+              </>
+            )}
 
             <Button
               variant="ghost"

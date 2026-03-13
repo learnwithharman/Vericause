@@ -9,6 +9,7 @@ import CampaignDetail from "./pages/CampaignDetail";
 import DonorDashboard from "./pages/DonorDashboard";
 import NgoDashboard from "./pages/NgoDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import AuthPage from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthPage />} />
           <Route path="/campaigns" element={<CampaignMarketplace />} />
           <Route path="/campaign/:id" element={<CampaignDetail />} />
           <Route path="/donor-dashboard" element={<DonorDashboard />} />
