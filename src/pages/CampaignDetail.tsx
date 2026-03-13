@@ -4,11 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { campaigns } from "@/data/campaigns";
+import { campaigns as staticCampaigns } from "@/data/campaigns";
 import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Users, Clock, Heart, Star, MapPin, ChevronRight, Share2, Info, CheckCircle2, ArrowRight, BarChart3, Globe, Zap } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { useQuery } from "@tanstack/react-query";
+import { campaigns as campaignsApi, donations as donationsApi, auth } from "@/lib/api";
+import { useState } from "react";
 
 const impactUpdates = [
   { 
@@ -39,8 +42,51 @@ const fundAllocationData = [
 
 export default function CampaignDetail() {
   const { id } = useParams();
-  const campaign = campaigns.find(c => c.id === id) || campaigns[0];
+  const [donateAmount, setDonateAmount] = useState(25);
+  const [donating, setDonating] = useState(false);
+
+  // Fetch live campaign data, fall back to static if server is down
+  const { data: apiCampaign } = useQuery({
+    queryKey: ["campaign", id],
+    queryFn: () => campaignsApi.get(id!),
+    enabled: !!id,
+    staleTime: 30_000,
+  });
+
+  const staticCampaign = staticCampaigns.find(c => c.id === id) || staticCampaigns[0];
+
+  // Merge: use API data if available, otherwise static
+  const campaign = apiCampaign
+    ? {
+        id: apiCampaign.id,
+        title: apiCampaign.title,
+        org: apiCampaign.ngo?.organizationName ?? 'Unknown NGO',
+        image: staticCampaign.image,
+        raised: apiCampaign.raisedAmount,
+        goal: apiCampaign.goalAmount,
+        donors: apiCampaign._count?.donations ?? 0,
+        daysLeft: 30,
+        category: apiCampaign.category,
+        verified: apiCampaign.ngo?.verificationStatus === 'VERIFIED',
+      }
+    : staticCampaign;
+
+  const liveUpdates = apiCampaign?.impactUpdates ?? [];
   const pct = Math.round((campaign.raised / campaign.goal) * 100);
+
+  async function handleDonate() {
+    if (!auth.isLoggedIn()) { alert('Please log in to donate.'); return; }
+    setDonating(true);
+    try {
+      await donationsApi.donate(campaign.id, donateAmount);
+      alert(`Donation of $${donateAmount} successful! Thank you.`);
+    } catch (e: unknown) {
+      const err = e as Error;
+      alert(err.message || 'Donation failed');
+    } finally {
+      setDonating(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background selection:bg-primary/10">
@@ -67,11 +113,11 @@ export default function CampaignDetail() {
                 {campaign.title}
               </h1>
               <div className="flex flex-wrap items-center gap-4">
-                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-50 border border-border/40">
+                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-50 dark:bg-white/5 border border-border/40">
                   <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-white overflow-hidden italic">
                     {campaign.org.charAt(0)}
                   </div>
-                  <span className="text-sm font-semibold tracking-tight">{campaign.org}</span>
+                  <span className="text-sm font-semibold tracking-tight text-foreground">{campaign.org}</span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700">
                   <ShieldCheck className="w-4 h-4" />
@@ -86,10 +132,10 @@ export default function CampaignDetail() {
               transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
               className="flex gap-3"
             >
-              <Button variant="ghost" className="rounded-full h-12 w-12 p-0 border border-border/40 hover:bg-slate-50 bg-white">
+              <Button variant="ghost" className="rounded-full h-12 w-12 p-0 border border-border/40 bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 text-foreground transition-all uppercase">
                 <Share2 className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" className="rounded-full h-12 w-12 p-0 border border-border/40 hover:bg-slate-50 bg-white">
+              <Button variant="ghost" className="rounded-full h-12 w-12 p-0 border border-border/40 bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 text-foreground transition-all uppercase">
                 <Star className="w-5 h-5" />
               </Button>
             </motion.div>
@@ -130,7 +176,7 @@ export default function CampaignDetail() {
                   </div>
                   <h3 className="text-2xl font-bold tracking-tight">Project Mandate</h3>
                 </div>
-                <p className="text-2xl font-medium text-slate-800 leading-snug tracking-tight">
+                <p className="text-2xl font-medium text-slate-800 dark:text-slate-200 leading-snug tracking-tight">
                   This initiative addresses immediate clean water access via high-efficiency solar infrastructure. Beyond the physical assets, we are establishing a sovereign community maintenance layer to ensure generational resilience.
                 </p>
                 <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl font-medium">
@@ -140,9 +186,9 @@ export default function CampaignDetail() {
 
               {/* Data Layers */}
               <Tabs defaultValue="transparency" className="w-full">
-                <TabsList className="bg-slate-100/50 p-1.5 rounded-full border border-border/40 mb-12 inline-flex">
-                  <TabsTrigger value="transparency" className="rounded-full px-8 py-2.5 text-xs font-bold uppercase tracking-[0.1em] data-[state=active]:bg-white data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all">Transparency Protocol</TabsTrigger>
-                  <TabsTrigger value="timeline" className="rounded-full px-8 py-2.5 text-xs font-bold uppercase tracking-[0.1em] data-[state=active]:bg-white data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all">Impact Timeline</TabsTrigger>
+                <TabsList className="bg-slate-100/50 dark:bg-white/5 p-1.5 rounded-full border border-border/40 mb-12 inline-flex">
+                  <TabsTrigger value="transparency" className="rounded-full px-8 py-2.5 text-xs font-bold uppercase tracking-[0.1em] data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all">Transparency Protocol</TabsTrigger>
+                  <TabsTrigger value="timeline" className="rounded-full px-8 py-2.5 text-xs font-bold uppercase tracking-[0.1em] data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all">Impact Timeline</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="transparency" className="mt-0 space-y-12">
@@ -208,18 +254,18 @@ export default function CampaignDetail() {
                               <div className="h-px w-8 bg-primary/20" />
                             </div>
                             <h4 className="text-2xl font-bold tracking-tight">{u.title}</h4>
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-border/40 text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 dark:bg-white/5 border border-border/40 text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
                               {u.type}
                             </div>
                           </div>
-                          <div className="md:col-span-8 flex flex-col md:flex-row gap-8 bg-slate-50/50 rounded-[2rem] p-8 border border-border/20">
+                          <div className="md:col-span-8 flex flex-col md:flex-row gap-8 bg-slate-50/50 dark:bg-white/5 rounded-[2rem] p-8 border border-border/20">
                             <div className="flex-1 space-y-6">
                               <p className="text-muted-foreground leading-relaxed font-medium">{u.desc}</p>
                               <Button variant="ghost" className="h-10 px-0 hover:bg-transparent text-primary text-[10px] font-bold uppercase tracking-widest">
                                 EXPLORE DOCUMENTATION <ArrowRight className="w-3 h-3 ml-2" />
                               </Button>
                             </div>
-                            <div className="w-full md:w-40 aspect-square rounded-2xl overflow-hidden shadow-lg border-4 border-white shrink-0">
+                            <div className="w-full md:w-40 aspect-square rounded-2xl overflow-hidden shadow-lg border-4 border-white dark:border-slate-800 shrink-0">
                               <img src={u.image} alt={u.title} className="w-full h-full object-cover" />
                             </div>
                           </div>
@@ -238,7 +284,7 @@ export default function CampaignDetail() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                  className="elite-card p-12 bg-white relative overflow-hidden ring-4 ring-primary/5"
+                  className="elite-card p-12 bg-white dark:bg-slate-900/50 relative overflow-hidden ring-4 ring-primary/5"
                 >
                   <div className="absolute top-0 inset-x-0 h-1 bg-primary" />
                   
@@ -255,16 +301,16 @@ export default function CampaignDetail() {
                     </div>
 
                     <div className="space-y-4">
-                       <Progress value={pct} className="h-2 rounded-full bg-slate-100" />
+                       <Progress value={pct} className="h-2 rounded-full bg-slate-100 dark:bg-slate-800" />
                        <p className="text-[10px] font-bold text-center text-muted-foreground uppercase tracking-[0.2em] opacity-40">Target Protocol: ${campaign.goal.toLocaleString()} USD</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-slate-50 rounded-2xl p-6 border border-border/20 text-center">
+                      <div className="bg-slate-50 dark:bg-white/5 rounded-2xl p-6 border border-border/20 dark:border-white/10 text-center">
                         <div className="text-2xl font-display font-bold text-foreground mb-1">{campaign.donors}</div>
                         <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground">VERIFIED DONORS</div>
                       </div>
-                      <div className="bg-slate-50 rounded-2xl p-6 border border-border/20 text-center">
+                      <div className="bg-slate-50 dark:bg-white/5 rounded-2xl p-6 border border-border/20 dark:border-white/10 text-center">
                         <div className="text-2xl font-display font-bold text-foreground mb-1">{campaign.daysLeft}</div>
                         <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground">DAYS REMAINING</div>
                       </div>
@@ -283,7 +329,7 @@ export default function CampaignDetail() {
                         <input 
                            type="text" 
                            placeholder="Precision commitment" 
-                           className="w-full h-14 bg-slate-50 border border-border/20 rounded-2xl px-6 text-sm font-bold focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all outline-none"
+                           className="w-full h-14 bg-slate-50 dark:bg-white/5 border border-border/20 dark:border-white/10 rounded-2xl px-6 text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-primary/5 transition-all outline-none"
                         />
                         <span className="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase text-muted-foreground">USD</span>
                       </div>
@@ -327,7 +373,7 @@ export default function CampaignDetail() {
                       ].map((d, i) => (
                         <div key={i} className="flex items-center justify-between border-b border-border/40 pb-4 last:border-0 last:pb-0">
                            <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400">
+                              <div className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-white/5 flex items-center justify-center text-slate-400">
                                 <d.icon className="w-5 h-5" />
                               </div>
                               <div>
