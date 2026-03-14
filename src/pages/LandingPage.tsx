@@ -113,6 +113,21 @@ export default function LandingPage() {
   return (
     <div ref={containerRef} className="relative min-h-screen bg-background text-foreground selection:bg-primary/10 transition-colors duration-700 overflow-x-hidden">
       <Navbar />
+      
+      {/* Strategic Demo Indicator */}
+      <div className="fixed top-24 left-6 z-50 pointer-events-none hidden md:block">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-lg"
+        >
+          <div className="relative">
+            <div className="w-2 h-2 rounded-full bg-primary animate-ping absolute inset-0" />
+            <div className="w-2 h-2 rounded-full bg-primary relative" />
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/60">Strategic Demo Active</span>
+        </motion.div>
+      </div>
 
       {/* Protocol Background Engine */}
       <div className="fixed inset-0 z-0 pointer-events-none">

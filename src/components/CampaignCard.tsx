@@ -18,6 +18,7 @@ export interface CampaignData {
   category: string;
   verified: boolean;
   status?: string;
+  isDemo?: boolean;
 }
 
 export function CampaignCard({ campaign, index = 0, isBento = false }: { campaign: CampaignData; index?: number; isBento?: boolean }) {

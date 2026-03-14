@@ -34,9 +34,11 @@ export interface Campaign {
   raisedAmount: number;
   imageUrl?: string;
   category: string;
-  status: string;
+  status?: string; // Changed to optional
   transparencyScore: number;
   createdAt: string;
+  verified: boolean;
+  isDemo?: boolean;
   ngo: { organizationName: string; verificationStatus: string; contactInfo?: string; verificationDocUrl?: string };
   _count: { donations: number };
   impactUpdates?: ImpactUpdate[];
@@ -55,6 +57,7 @@ export interface Donation {
   amount: number;
   status: string;
   createdAt: string;
+  isDemo?: boolean;
   campaign: { title: string; category: string; ngo: { organizationName: string } };
 }
 

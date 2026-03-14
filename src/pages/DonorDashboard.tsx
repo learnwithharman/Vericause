@@ -28,8 +28,29 @@ export default function DonorDashboard() {
     staleTime: 30_000,
   });
 
-  const totalDeployed = myDonations.reduce((sum, d) => sum + d.amount, 0);
-  const campaignsSupported = new Set(myDonations.map(d => d.campaign?.title)).size;
+  const totalRealRaised = myDonations.reduce((sum, d) => sum + d.amount, 0);
+  
+  // Demo Data Integration
+  const demoDonations = JSON.parse(localStorage.getItem('vc_demo_donations') || '[]');
+  const totalDemoRaised = demoDonations.reduce((sum: any, d: any) => sum + d.amount, 0);
+  
+  const totalDeployed = totalRealRaised + totalDemoRaised;
+  const campaignsSupported = new Set([
+    ...myDonations.map(d => d.campaign?.title),
+    ...demoDonations.map((d: any) => d.campaignTitle)
+  ]).size;
+
+  const allDonations = [
+    ...myDonations.map(d => ({ ...d, isDemo: false })),
+    ...demoDonations.map((d: any) => ({
+      id: `demo-${Math.random()}`,
+      amount: d.amount,
+      status: "COMPLETED",
+      createdAt: d.date,
+      isDemo: true,
+      campaign: { title: d.campaignTitle }
+    }))
+  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   return (
     <div className="min-h-screen bg-background selection:bg-primary/10">
@@ -87,18 +108,21 @@ export default function DonorDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {myDonations.map((d, i) => (
+                    {allDonations.map((d: any, i) => (
                       <TableRow key={i} className="group hover:bg-slate-50/20 border-border/40">
                         <TableCell className="py-6 pl-8">
                           <div className="flex items-center gap-4">
                             <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-primary italic border border-border/60 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                               {d.campaign?.title?.charAt(0) ?? '?'}
                             </div>
-                            <span className="font-bold text-[15px] tracking-tight group-hover:text-primary transition-colors">{d.campaign?.title ?? 'Unknown Campaign'}</span>
+                            <div className="flex flex-col">
+                              <span className="font-bold text-[15px] tracking-tight group-hover:text-primary transition-colors">{d.campaign?.title ?? 'Unknown Campaign'}</span>
+                              {d.isDemo && <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em] mt-1 ml-0.5 opacity-60">STRATEGIC DEMO DATA</span>}
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell>
-                          <span className="font-display font-bold text-[15px] tracking-tight">${d.amount.toLocaleString()}</span>
+                          <span className="font-display font-bold text-[15px] tracking-tight text-foreground">${d.amount.toLocaleString()}</span>
                         </TableCell>
                         <TableCell>
                           <span className="text-[13px] font-medium text-slate-500">{new Date(d.createdAt).toLocaleDateString()}</span>

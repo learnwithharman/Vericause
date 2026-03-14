@@ -68,14 +68,42 @@ export default function CampaignDetail() {
         daysLeft: 30,
         category: apiCampaign.category,
         verified: apiCampaign.ngo?.verificationStatus === 'VERIFIED',
+        isDemo: apiCampaign.isDemo,
       }
     : staticCampaign;
 
   const liveUpdates = apiCampaign?.impactUpdates ?? [];
   const pct = Math.round((campaign.raised / campaign.goal) * 100);
 
+  const [showSuccess, setShowSuccess] = useState(false);
+
   async function handleDonate() {
     if (!auth.isLoggedIn()) { alert('Please log in to donate.'); return; }
+    
+    if (campaign.isDemo) {
+      setDonating(true);
+      await new Promise(r => setTimeout(r, 1200)); // Simulate chain confirmation
+      
+      const demoDonation = {
+        amount: donateAmount,
+        campaignTitle: campaign.title,
+        date: new Date().toISOString(),
+      };
+      
+      const existing = JSON.parse(localStorage.getItem('vc_demo_donations') || '[]');
+      localStorage.setItem('vc_demo_donations', JSON.stringify([...existing, demoDonation]));
+      
+      setDonating(false);
+      setShowSuccess(true);
+      
+      // Dispatch global event for Notification system
+      window.dispatchEvent(new CustomEvent('vc-donation', { 
+        detail: { amount: donateAmount, title: campaign.title, name: 'Private Investor' } 
+      }));
+      
+      return;
+    }
+
     setDonating(true);
     try {
       await donationsApi.donate(campaign.id, donateAmount);
@@ -391,6 +419,38 @@ export default function CampaignDetail() {
           </div>
         </div>
       </main>
+
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="elite-card max-w-md w-full p-12 text-center bg-white dark:bg-slate-900 shadow-2xl"
+            >
+              <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-8">
+                <CheckCircle2 className="w-10 h-10 text-emerald-500 animate-pulse" />
+              </div>
+              <h2 className="text-3xl font-display font-bold tracking-tight mb-4">Strategic Impact Confirmed</h2>
+              <p className="text-slate-500 text-sm font-medium leading-relaxed mb-10">
+                Your contribution of <span className="text-primary font-bold">${donateAmount}</span> has been processed through the autonomous Trust Layer. Transparency protocol is now active for this capital.
+              </p>
+              <Button 
+                onClick={() => setShowSuccess(false)}
+                className="w-full h-14 bg-primary text-white font-bold rounded-xl"
+              >
+                Return to Dashboard
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>
