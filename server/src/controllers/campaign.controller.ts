@@ -35,8 +35,18 @@ export const campaignController = {
 
   create: async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const data = campaignSchema.parse(req.body);
-      const campaign = await campaignService.create(req.user!.id, data);
+      const { title, description, category } = req.body;
+      const goalAmount = parseFloat(req.body.goalAmount);
+      
+      const imageUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+      
+      const campaign = await campaignService.create(req.user!.id, {
+        title,
+        description,
+        goalAmount,
+        category,
+        imageUrl
+      });
       res.status(201).json(campaign);
     } catch (error: unknown) {
       next(error);

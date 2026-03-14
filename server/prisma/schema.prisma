@@ -23,6 +23,8 @@ model NGO {
   userId             String     @unique
   organizationName   String
   description        String
+  contactInfo        String?
+  verificationDocUrl String?
   verificationStatus String
   campaigns          Campaign[]
   user               User       @relation(fields: [userId], references: [id])
@@ -35,6 +37,7 @@ model Campaign {
   description       String
   goalAmount        Float
   raisedAmount      Float          @default(0)
+  imageUrl          String?
   category          String
   status            String
   transparencyScore Float          @default(0)

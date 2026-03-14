@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 import authRoutes from './routes/auth.routes';
 import campaignRoutes from './routes/campaign.routes';
 import donationRoutes from './routes/donation.routes';
@@ -9,6 +10,9 @@ import { errorHandler } from './middleware/error.middleware';
 import { standardLimiter, authLimiter } from './middleware/rate-limit.middleware';
 
 const app = express();
+
+// Static files for uploads
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Middleware
 app.use(cors({

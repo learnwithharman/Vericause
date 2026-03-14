@@ -3,14 +3,22 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 function getAuthHeaders() {
   const token = localStorage.getItem('vc_token');
-  return token ? { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const headers = { ...getAuthHeaders(), ...(options.headers || {}) } as Record<string, string>;
+  
+  // Only set Content-Type to JSON if body is not FormData
+  if (options.body && !(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
+
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
-    headers: { ...getAuthHeaders(), ...(options.headers || {}) },
+    headers,
   });
+  
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || 'API error');
   return data as T;
@@ -23,6 +31,7 @@ export interface Campaign {
   description: string;
   goalAmount: number;
   raisedAmount: number;
+  imageUrl?: string;
   category: string;
   status: string;
   transparencyScore: number;
@@ -58,8 +67,11 @@ export interface AuthUser {
 
 // --- Auth ---
 export const auth = {
-  register: (data: { name: string; email: string; password: string; role: string; organizationName?: string; description?: string }) =>
-    request<{ user: AuthUser; accessToken: string }>('/auth/register', { method: 'POST', body: JSON.stringify(data) }),
+  register: (data: FormData | object) =>
+    request<{ user: AuthUser; accessToken: string }>('/auth/register', { 
+      method: 'POST', 
+      body: data instanceof FormData ? data : JSON.stringify(data) 
+    }),
 
   login: (email: string, password: string) =>
     request<{ user: AuthUser; accessToken: string }>('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
@@ -91,8 +103,11 @@ export const campaigns = {
 
   get: (id: string) => request<Campaign>(`/campaigns/${id}`),
 
-  create: (data: { title: string; description: string; goalAmount: number; category: string }) =>
-    request<Campaign>('/campaigns', { method: 'POST', body: JSON.stringify(data) }),
+  create: (data: FormData | object) =>
+    request<Campaign>('/campaigns', { 
+      method: 'POST', 
+      body: data instanceof FormData ? data : JSON.stringify(data) 
+    }),
 
   update: (id: string, data: Partial<Campaign>) =>
     request<Campaign>(`/campaigns/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
@@ -134,5 +149,15 @@ export const admin = {
   listCampaigns: () => request<Campaign[]>('/admin/campaigns'),
   approveCampaign: (id: string, status: 'APPROVED' | 'REJECTED') => 
     request<Campaign>(`/admin/campaigns/${id}/approve`, { method: 'PUT', body: JSON.stringify({ status }) }),
-  getStats: () => request<{ users: number; campaigns: number; totalRaised: number; donations: number }>('/admin/stats'),
+  getStats: () => request<AdminStats>('/admin/stats'),
 };
+
+export interface AdminStats {
+  users: number;
+  campaigns: number;
+  activeCampaigns: number;
+  pendingCampaigns: number;
+  verifiedNgos: number;
+  totalRaised: number;
+  donations: number;
+}

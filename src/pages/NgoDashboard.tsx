@@ -22,6 +22,7 @@ export default function NgoDashboard() {
 
   // Campaign Form State
   const [newCampaign, setNewCampaign] = useState({ title: "", description: "", goalAmount: 0, category: "" });
+  const [campaignImage, setCampaignImage] = useState<File | null>(null);
 
   // Update Form State
   const [selectedCampaignId, setSelectedCampaignId] = useState("");
@@ -34,11 +35,22 @@ export default function NgoDashboard() {
   });
 
   const createCampaignMutation = useMutation({
-    mutationFn: (data: typeof newCampaign) => campaignsApi.create(data),
+    mutationFn: (data: typeof newCampaign) => {
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("goalAmount", data.goalAmount.toString());
+      formData.append("category", data.category);
+      if (campaignImage) {
+        formData.append("image", campaignImage);
+      }
+      return campaignsApi.create(formData);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ngo-campaigns'] });
       alert("Campaign initialized successfully!");
       setNewCampaign({ title: "", description: "", goalAmount: 0, category: "" });
+      setCampaignImage(null);
       setActiveTab("campaigns");
     },
     onError: (e: Error) => alert(e.message)
@@ -292,8 +304,12 @@ export default function NgoDashboard() {
                 </div>
 
                 <div className="elite-card p-8 flex flex-col items-center justify-center text-center space-y-6 bg-slate-50/30 border-dashed border-2 border-border/60">
-                  <div className="w-16 h-16 rounded-2xl bg-white border border-border/40 flex items-center justify-center text-slate-300 shadow-sm">
-                    <Upload className="w-6 h-6" />
+                  <div className="w-16 h-16 rounded-2xl bg-white border border-border/40 flex items-center justify-center text-slate-300 shadow-sm overflow-hidden">
+                    {campaignImage ? (
+                      <img src={URL.createObjectURL(campaignImage)} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <Upload className="w-6 h-6" />
+                    )}
                   </div>
                   <div>
                     <h4 className="text-lg font-bold tracking-tight mb-1">Evidence Objects</h4>
@@ -301,9 +317,17 @@ export default function NgoDashboard() {
                       Attach satellite imagery, engineering specs, or regional verification documents.
                     </p>
                   </div>
-                  <Button variant="outline" className="h-10 px-6 rounded-lg border-border/60 hover:bg-white transition-all font-bold text-[11px] uppercase tracking-widest">
-                    Browse Registry
-                  </Button>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={e => setCampaignImage(e.target.files ? e.target.files[0] : null)}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                    <Button variant="outline" className="h-10 px-6 rounded-lg border-border/60 hover:bg-white transition-all font-bold text-[11px] uppercase tracking-widest pointer-events-none">
+                      {campaignImage ? "Change Image" : "Upload Evidence"}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </TabsContent>

@@ -6,6 +6,7 @@ interface CampaignCreateData {
   description: string;
   goalAmount: number;
   category: string;
+  imageUrl?: string;
 }
 
 interface CampaignUpdateData {
@@ -14,6 +15,7 @@ interface CampaignUpdateData {
   goalAmount?: number;
   category?: string;
   status?: string;
+  imageUrl?: string;
 }
 
 interface ImpactUpdateData {
@@ -54,11 +56,20 @@ export const campaignService = {
     const ngo = await prisma.nGO.findUnique({ where: { userId } });
     if (!ngo) throw new AppError('NGO profile not found', 404);
     
+    if (ngo.verificationStatus !== 'VERIFIED') {
+      throw new AppError('Only verified NGOs can launch campaigns. Please wait for administrative approval.', 403);
+    }
+    
+    if (!data.imageUrl) {
+      throw new AppError('Campaign must have at least one valid supporting image.', 400);
+    }
+
     return prisma.campaign.create({
       data: {
         title: data.title,
         description: data.description,
         goalAmount: data.goalAmount,
+        imageUrl: data.imageUrl,
         category: data.category,
         ngoId: ngo.id,
         status: 'PENDING',

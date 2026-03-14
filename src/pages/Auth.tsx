@@ -17,10 +17,12 @@ export default function AuthPage() {
     name: "",
     email: "",
     password: "",
-    role: "DONOR",
+    role: "DONOR" as "DONOR" | "NGO" | "ADMIN",
     organizationName: "",
-    description: ""
+    description: "",
+    contactInfo: ""
   });
+  const [verificationDoc, setVerificationDoc] = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,8 +32,24 @@ export default function AuthPage() {
         const res = await auth.login(formData.email, formData.password);
         auth.saveSession(res.accessToken, res.user);
       } else {
-        const res = await auth.register(formData);
-        auth.saveSession(res.accessToken, res.user);
+        if (formData.role === "NGO") {
+          const data = new FormData();
+          data.append("name", formData.name);
+          data.append("email", formData.email);
+          data.append("password", formData.password);
+          data.append("role", formData.role);
+          data.append("organizationName", formData.organizationName);
+          data.append("description", formData.description);
+          data.append("contactInfo", formData.contactInfo);
+          if (verificationDoc) {
+            data.append("verificationDoc", verificationDoc);
+          }
+          const res = await auth.register(data);
+          auth.saveSession(res.accessToken, res.user);
+        } else {
+          const res = await auth.register(formData);
+          auth.saveSession(res.accessToken, res.user);
+        }
       }
       
       const user = auth.currentUser();
@@ -143,6 +161,27 @@ export default function AuthPage() {
                       placeholder="Global Relief Org" 
                       className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white border-border/40"
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Contact Info (Phone/Address)</label>
+                    <Input 
+                      required
+                      value={formData.contactInfo}
+                      onChange={e => setFormData({...formData, contactInfo: e.target.value})}
+                      placeholder="+1 (555) 000-0000" 
+                      className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white border-border/40"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Verification Document (PDF/JPG)</label>
+                    <div className="relative">
+                      <Input 
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={e => setVerificationDoc(e.target.files ? e.target.files[0] : null)}
+                        className="h-12 pt-2 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white border-border/40"
+                      />
+                    </div>
                   </div>
                 </motion.div>
               )}

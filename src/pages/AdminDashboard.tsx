@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { DollarSign, Activity, AlertTriangle, ShieldCheck, Check, X, Search, FileText, ChevronRight, Gavel, Filter, Zap, Globe, Shield, CheckCircle2, Pause, Play, Trash2 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { admin as adminApi, campaigns as campaignsApi, auth } from "@/lib/api";
+import { admin as adminApi, campaigns as campaignsApi, auth, NGO, Campaign } from "@/lib/api";
 
 const donationTrendData = [
   { name: 'Mon', value: 4200 },
@@ -19,17 +19,6 @@ const donationTrendData = [
   { name: 'Fri', value: 6500 },
   { name: 'Sat', value: 5800 },
   { name: 'Sun', value: 7200 },
-];
-
-const ngos = [
-  { name: "Global Water Initiative", status: "Verified", docs: 12, date: "Jan 15, 2026", trustScore: 98, region: "East Africa" },
-  { name: "Solar Horizon Trust", status: "Pending", docs: 8, date: "Mar 01, 2026", trustScore: 0, region: "SE Asia" },
-  { name: "EcoSanctuary NGO", status: "Review", docs: 4, date: "Feb 20, 2026", trustScore: 84, region: "Europe" },
-];
-
-const campaignQueue = [
-  { title: "Grid-Scale Solar Array", ngo: "Solar Horizon", date: "Mar 03, 2026", category: "Energy", priority: "High" },
-  { title: "Emergency Medical Logistics", ngo: "HealthFirst", date: "Mar 02, 2026", category: "Health", priority: "Critical" },
 ];
 
 export default function AdminDashboard() {
@@ -124,10 +113,10 @@ export default function AdminDashboard() {
 
           {/* Stats Intelligence */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-            <StatsCard label="Operating Capital" value={`$${((stats?.totalRaised || 0) / 1000000).toFixed(1)}M`} change="+14.2%" icon={DollarSign} index={0} />
-            <StatsCard label="Network Nodes" value={stats?.users?.toLocaleString() || "0"} change="Total Users" icon={Globe} index={1} />
-            <StatsCard label="Live Campaigns" value={stats?.campaigns?.toLocaleString() || "0"} change="Active Entries" icon={ShieldCheck} index={2} />
-            <StatsCard label="Total Donations" value={stats?.donations?.toLocaleString() || "0"} change="Processed" icon={Zap} index={3} />
+            <StatsCard label="Operating Capital" value={`$${((stats?.totalRaised || 0) / 1000).toFixed(1)}K`} change="+14.2%" icon={DollarSign} index={0} />
+            <StatsCard label="Verified Network" value={stats?.verifiedNgos?.toLocaleString() || "0"} change="Approved NGOs" icon={ShieldCheck} index={1} />
+            <StatsCard label="Live Campaigns" value={stats?.activeCampaigns?.toLocaleString() || "0"} change="Active Entries" icon={Globe} index={2} />
+            <StatsCard label="Moderation Queue" value={stats?.pendingCampaigns?.toLocaleString() || "0"} change="Action Required" icon={Activity} index={3} />
           </div>
 
           <div className="grid lg:grid-cols-12 gap-6 mb-12">
@@ -247,21 +236,33 @@ export default function AdminDashboard() {
                               <div className="flex items-center gap-2">
                                 <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">{n.user.email}</span>
                                 <div className="w-1 h-1 rounded-full bg-border" />
-                                <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Joined {new Date(n.user.createdAt).toLocaleDateString()}</span>
+                                <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">{n.contactInfo || "No Contact Provided"}</span>
                               </div>
                             </div>
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            className={
-                              n.verificationStatus === "VERIFIED" ? "bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-none font-bold text-[8px] uppercase tracking-widest px-2.5 py-0.5 rounded-full" :
-                              n.verificationStatus === "REJECTED" ? "bg-red-50 text-red-600 border border-red-100 shadow-none font-bold text-[8px] uppercase tracking-widest px-2.5 py-0.5 rounded-full" :
-                              "bg-amber-50 text-amber-600 border border-amber-100 shadow-none font-bold text-[8px] uppercase tracking-widest px-2.5 py-0.5 rounded-full"
-                            }
-                          >
-                            {n.verificationStatus}
-                          </Badge>
+                          <div className="flex items-center gap-3">
+                            <Badge
+                              className={
+                                n.verificationStatus === "VERIFIED" ? "bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-none font-bold text-[8px] uppercase tracking-widest px-2.5 py-0.5 rounded-full" :
+                                n.verificationStatus === "REJECTED" ? "bg-red-50 text-red-600 border border-red-100 shadow-none font-bold text-[8px] uppercase tracking-widest px-2.5 py-0.5 rounded-full" :
+                                "bg-amber-50 text-amber-600 border border-amber-100 shadow-none font-bold text-[8px] uppercase tracking-widest px-2.5 py-0.5 rounded-full"
+                              }
+                            >
+                              {n.verificationStatus}
+                            </Badge>
+                            {n.verificationDocUrl && (
+                              <a 
+                                href={`${import.meta.env.VITE_API_URL?.replace('/api', '')}${n.verificationDocUrl}`} 
+                                target="_blank" 
+                                rel="noreferrer"
+                                className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-white transition-all border border-border/40"
+                              >
+                                <FileText className="w-3.5 h-3.5" />
+                              </a>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell className="text-center">
                           <div className="inline-flex flex-col">

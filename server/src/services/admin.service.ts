@@ -44,16 +44,22 @@ export const adminService = {
   },
 
   getStats: async () => {
-    const [userCount, campaignCount, totalRaised, donationCount] = await Promise.all([
+    const [userCount, campaignCount, totalRaised, donationCount, activeCampaigns, pendingCampaigns, verifiedNgos] = await Promise.all([
       prisma.user.count(),
       prisma.campaign.count(),
       prisma.campaign.aggregate({ _sum: { raisedAmount: true } }),
-      prisma.donation.count()
+      prisma.donation.count(),
+      prisma.campaign.count({ where: { status: 'APPROVED' } }),
+      prisma.campaign.count({ where: { status: 'PENDING' } }),
+      prisma.nGO.count({ where: { verificationStatus: 'VERIFIED' } }),
     ]);
 
     return {
       users: userCount,
       campaigns: campaignCount,
+      activeCampaigns,
+      pendingCampaigns,
+      verifiedNgos,
       totalRaised: totalRaised._sum.raisedAmount || 0,
       donations: donationCount
     };

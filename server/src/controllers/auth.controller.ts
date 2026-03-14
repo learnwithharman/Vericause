@@ -11,13 +11,20 @@ const registerSchema = z.object({
   role: z.enum(['DONOR', 'NGO', 'ADMIN']),
   organizationName: z.string().optional(),
   description: z.string().optional(),
+  contactInfo: z.string().optional(),
 });
 
 export const authController = {
   register: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const data = registerSchema.parse(req.body);
-      const { user, accessToken, refreshToken } = await authService.register(data);
+      
+      const verificationDocUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+      
+      const { user, accessToken, refreshToken } = await authService.register({
+        ...data,
+        verificationDocUrl
+      });
       
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,

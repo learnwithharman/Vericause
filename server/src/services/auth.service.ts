@@ -11,6 +11,8 @@ interface RegisterData {
   role: 'DONOR' | 'NGO' | 'ADMIN';
   organizationName?: string;
   description?: string;
+  contactInfo?: string;
+  verificationDocUrl?: string;
 }
 
 export const authService = {
@@ -36,6 +38,8 @@ export const authService = {
             create: {
               organizationName: data.organizationName,
               description: data.description || '',
+              contactInfo: data.contactInfo || '',
+              verificationDocUrl: data.verificationDocUrl || '',
               verificationStatus: 'PENDING',
             }
           }
