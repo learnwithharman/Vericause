@@ -12,7 +12,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     headers: { ...getAuthHeaders(), ...(options.headers || {}) },
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'API error');
+  if (!res.ok) throw new Error(data.message || 'API error');
   return data as T;
 }
 
