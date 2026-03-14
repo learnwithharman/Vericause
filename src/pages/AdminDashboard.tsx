@@ -21,6 +21,7 @@ const donationTrendData = [
   { name: 'Sun', value: 7200 },
 ];
 
+
 export default function AdminDashboard() {
   const queryClient = useQueryClient();
 

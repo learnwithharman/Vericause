@@ -27,6 +27,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 // --- Types ---
 export interface Campaign {
   id: string;
+  ngoId: string;
   title: string;
   description: string;
   goalAmount: number;
@@ -36,7 +37,7 @@ export interface Campaign {
   status: string;
   transparencyScore: number;
   createdAt: string;
-  ngo: { organizationName: string; verificationStatus: string };
+  ngo: { organizationName: string; verificationStatus: string; contactInfo?: string; verificationDocUrl?: string };
   _count: { donations: number };
   impactUpdates?: ImpactUpdate[];
 }
@@ -62,7 +63,7 @@ export interface AuthUser {
   name: string;
   email: string;
   role: string;
-  ngo?: { organizationName: string; verificationStatus: string };
+  ngo?: { organizationName: string; verificationStatus: string; contactInfo?: string; verificationDocUrl?: string };
 }
 
 // --- Auth ---
@@ -137,6 +138,8 @@ export interface NGO {
   id: string;
   organizationName: string;
   description: string;
+  contactInfo?: string;
+  verificationDocUrl?: string;
   verificationStatus: string;
   user: { name: string; email: string; createdAt: string };
   _count: { campaigns: number };
