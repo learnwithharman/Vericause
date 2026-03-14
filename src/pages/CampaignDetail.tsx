@@ -12,6 +12,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useQuery } from "@tanstack/react-query";
 import { campaigns as campaignsApi, donations as donationsApi, auth } from "@/lib/api";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 const impactUpdates = [
   { 
@@ -348,14 +349,25 @@ export default function CampaignDetail() {
                       <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-center text-foreground/40">Select Commitment Tier</p>
                       <div className="grid grid-cols-3 gap-3">
                         {[25, 50, 100].map(a => (
-                          <button key={a} className="h-14 rounded-2xl border border-border/40 font-bold text-base hover:border-primary hover:bg-primary/5 transition-all outline-none focus:ring-2 focus:ring-primary/20">
+                          <button 
+                            key={a} 
+                            onClick={() => setDonateAmount(a)}
+                            className={cn(
+                              "h-14 rounded-2xl border font-bold text-base transition-all outline-none focus:ring-2 focus:ring-primary/20",
+                              donateAmount === a 
+                                ? "border-primary bg-primary/10 text-primary" 
+                                : "border-border/40 hover:border-primary hover:bg-primary/5"
+                            )}
+                          >
                             ${a}
                           </button>
                         ))}
                       </div>
                       <div className="relative group">
                         <input 
-                           type="text" 
+                           type="number" 
+                           value={donateAmount || ""}
+                           onChange={(e) => setDonateAmount(Number(e.target.value))}
                            placeholder="Precision commitment" 
                            className="w-full h-14 bg-slate-50 dark:bg-white/5 border border-border/20 dark:border-white/10 rounded-2xl px-6 text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-primary/5 transition-all outline-none"
                         />
@@ -363,8 +375,14 @@ export default function CampaignDetail() {
                       </div>
                     </div>
 
-                    <Button size="lg" className="w-full h-16 bg-primary hover:bg-primary/90 text-white text-lg font-bold rounded-2xl shadow-xl shadow-indigo-100 group transition-all active:scale-95">
-                      Confirm Contribution <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    <Button 
+                      onClick={handleDonate}
+                      disabled={donating || donateAmount <= 0}
+                      size="lg" 
+                      className="w-full h-16 bg-primary hover:bg-primary/90 text-white text-lg font-bold rounded-2xl shadow-xl shadow-indigo-100 group transition-all active:scale-95"
+                    >
+                      {donating ? "Processing..." : "Confirm Contribution"} 
+                      {!donating && <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />}
                     </Button>
 
                     <div className="flex items-center justify-center gap-6 opacity-40 grayscale group-hover:grayscale-0 transition-all duration-700">
