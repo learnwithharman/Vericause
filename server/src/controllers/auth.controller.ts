@@ -12,6 +12,12 @@ const registerSchema = z.object({
   organizationName: z.string().optional(),
   description: z.string().optional(),
   contactInfo: z.string().optional(),
+}).refine(data => {
+  if (data.role === 'NGO' && !data.organizationName) return false;
+  return true;
+}, {
+  message: "Organization name is required for NGO accounts",
+  path: ["organizationName"]
 });
 
 export const authController = {

@@ -25,12 +25,21 @@ interface ImpactUpdateData {
 }
 
 export const campaignService = {
-  getAll: async (filters: { category?: string; status?: string }) => {
+  getAll: async (filters: { category?: string; status?: string; userId?: string }) => {
+    const whereClause: any = {
+      ...(filters.category ? { category: filters.category } : {}),
+      ...(filters.userId ? { ngo: { userId: filters.userId } } : {}),
+    };
+
+    if (filters.status && filters.status !== 'ALL') {
+      whereClause.status = filters.status;
+    } else if (!filters.status) {
+      whereClause.status = 'APPROVED';
+    }
+    // If status is 'ALL', we don't add a status filter at all, yielding all campaigns for that user/category
+
     return prisma.campaign.findMany({
-      where: { 
-        status: filters.status || 'APPROVED', 
-        ...(filters.category ? { category: filters.category } : {}) 
-      },
+      where: whereClause,
       include: {
         ngo: { select: { organizationName: true, verificationStatus: true } },
         _count: { select: { donations: true } },

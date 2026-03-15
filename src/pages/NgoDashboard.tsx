@@ -30,7 +30,7 @@ export default function NgoDashboard() {
 
   const { data: campaigns = [], isLoading } = useQuery({
     queryKey: ['ngo-campaigns'],
-    queryFn: () => campaignsApi.list({ status: "" }), // Get all statuses for the NGO
+    queryFn: () => campaignsApi.list({ status: "ALL" }), // Fetch ALL statuses (Pending, Approved, Paused) for this NGO
     enabled: auth.isLoggedIn(),
   });
 

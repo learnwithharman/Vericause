@@ -16,6 +16,8 @@ export const campaignController = {
       const filters = {
         category: req.query.category as string,
         status: req.query.status as string,
+        // Enforce ownership for NGOs, Admin sees all unless they specify
+        userId: req.user?.role === 'NGO' ? req.user.id : undefined,
       };
       const campaigns = await campaignService.getAll(filters);
       res.json(campaigns);

@@ -55,6 +55,7 @@ export default function CampaignDetail() {
   });
 
   const staticCampaign = staticCampaigns.find(c => c.id === id) || staticCampaigns[0];
+  const isHardcodedDemo = ["1", "2", "3"].includes(id || "");
 
   // Merge: use API data if available, otherwise static
   const campaign = apiCampaign
@@ -69,7 +70,7 @@ export default function CampaignDetail() {
         daysLeft: 30,
         category: apiCampaign.category,
         verified: apiCampaign.ngo?.verificationStatus === 'VERIFIED',
-        isDemo: apiCampaign.isDemo,
+        isDemo: apiCampaign.isDemo || staticCampaign.isDemo || isHardcodedDemo,
       }
     : staticCampaign;
 
@@ -79,9 +80,11 @@ export default function CampaignDetail() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   async function handleDonate() {
+    // For demo campaigns, we allow "donations" even without full auth check if needed, 
+    // but better to keep it consistent.
     if (!auth.isLoggedIn()) { alert('Please log in to donate.'); return; }
     
-    if (campaign.isDemo) {
+    if (campaign.isDemo || isHardcodedDemo) {
       setDonating(true);
       await new Promise(r => setTimeout(r, 1200)); // Simulate chain confirmation
       
@@ -99,7 +102,7 @@ export default function CampaignDetail() {
       
       // Dispatch global event for Notification system
       window.dispatchEvent(new CustomEvent('vc-donation', { 
-        detail: { amount: donateAmount, title: campaign.title, name: 'Private Investor' } 
+        detail: { amount: donateAmount, title: campaign.title, name: 'Strategic Donor' } 
       }));
       
       return;
@@ -346,17 +349,23 @@ export default function CampaignDetail() {
                     </div>
 
                     <div className="space-y-6 pt-4">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-center text-foreground/40">Select Commitment Tier</p>
+                      <div className="flex items-center justify-between">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">Select Commitment Tier</p>
+                        {(campaign.isDemo || isHardcodedDemo) && (
+                          <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-primary/30 text-primary bg-primary/5">Demo Environment</Badge>
+                        )}
+                      </div>
                       <div className="grid grid-cols-3 gap-3">
                         {[25, 50, 100].map(a => (
                           <button 
                             key={a} 
                             onClick={() => setDonateAmount(a)}
+                            type="button"
                             className={cn(
                               "h-14 rounded-2xl border font-bold text-base transition-all outline-none focus:ring-2 focus:ring-primary/20",
-                              donateAmount === a 
+                              Number(donateAmount) === a 
                                 ? "border-primary bg-primary/10 text-primary" 
-                                : "border-border/40 hover:border-primary hover:bg-primary/5"
+                                : "border-border/40 hover:border-primary hover:bg-primary/10"
                             )}
                           >
                             ${a}
@@ -367,7 +376,7 @@ export default function CampaignDetail() {
                         <input 
                            type="number" 
                            value={donateAmount || ""}
-                           onChange={(e) => setDonateAmount(Number(e.target.value))}
+                           onChange={(e) => setDonateAmount(Math.max(0, Number(e.target.value)))}
                            placeholder="Precision commitment" 
                            className="w-full h-14 bg-slate-50 dark:bg-white/5 border border-border/20 dark:border-white/10 rounded-2xl px-6 text-sm font-bold focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-primary/5 transition-all outline-none"
                         />
