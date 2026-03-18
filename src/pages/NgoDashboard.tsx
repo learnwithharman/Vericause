@@ -23,6 +23,7 @@ export default function NgoDashboard() {
   // Campaign Form State
   const [newCampaign, setNewCampaign] = useState({ title: "", description: "", goalAmount: 0, category: "" });
   const [campaignImage, setCampaignImage] = useState<File | null>(null);
+  const [verificationDoc, setVerificationDoc] = useState<File | null>(null);
 
   // Update Form State
   const [selectedCampaignId, setSelectedCampaignId] = useState("");
@@ -44,6 +45,9 @@ export default function NgoDashboard() {
       if (campaignImage) {
         formData.append("image", campaignImage);
       }
+      if (verificationDoc) {
+        formData.append("verificationDoc", verificationDoc);
+      }
       return campaignsApi.create(formData);
     },
     onSuccess: () => {
@@ -51,6 +55,7 @@ export default function NgoDashboard() {
       alert("Campaign initialized successfully!");
       setNewCampaign({ title: "", description: "", goalAmount: 0, category: "" });
       setCampaignImage(null);
+      setVerificationDoc(null);
       setActiveTab("campaigns");
     },
     onError: (e: Error) => alert(e.message)
@@ -324,9 +329,25 @@ export default function NgoDashboard() {
                       onChange={e => setCampaignImage(e.target.files ? e.target.files[0] : null)}
                       className="absolute inset-0 opacity-0 cursor-pointer"
                     />
-                    <Button variant="outline" className="h-10 px-6 rounded-lg border-border/60 hover:bg-white transition-all font-bold text-[11px] uppercase tracking-widest pointer-events-none">
+                    <Button variant="outline" className="h-10 px-6 rounded-lg border-border/60 hover:bg-white transition-all font-bold text-[11px] uppercase tracking-widest pointer-events-none w-full">
                       {campaignImage ? "Change Image" : "Upload Evidence"}
                     </Button>
+                  </div>
+
+                  <div className="w-full pt-4 border-t border-border/40">
+                    <h4 className="text-[11px] font-bold tracking-tight mb-3 text-slate-500 uppercase tracking-widest">Verification Node</h4>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={e => setVerificationDoc(e.target.files ? e.target.files[0] : null)}
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                      />
+                      <Button variant="outline" className={`h-12 w-full rounded-xl border border-border/60 font-bold text-[12px] transition-all ${verificationDoc ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-white text-slate-400"}`}>
+                        <FileText className="w-4 h-4 mr-2" />
+                        {verificationDoc ? verificationDoc.name : "Attach Final Documentation"}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>

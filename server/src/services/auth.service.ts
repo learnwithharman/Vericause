@@ -39,8 +39,7 @@ export const authService = {
               organizationName: data.organizationName,
               description: data.description || '',
               contactInfo: data.contactInfo || '',
-              verificationDocUrl: data.verificationDocUrl || '',
-              verificationStatus: 'PENDING',
+              verificationStatus: 'VERIFIED',
             }
           }
         } : {})

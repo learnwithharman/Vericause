@@ -36,6 +36,7 @@ export interface Campaign {
   category: string;
   status?: string; // Changed to optional
   transparencyScore: number;
+  verificationDocUrl?: string;
   createdAt: string;
   verified: boolean;
   isDemo?: boolean;

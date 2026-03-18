@@ -25,11 +25,8 @@ export const authController = {
     try {
       const data = registerSchema.parse(req.body);
       
-      const verificationDocUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
-      
       const { user, accessToken, refreshToken } = await authService.register({
-        ...data,
-        verificationDocUrl
+        ...data
       });
       
       res.cookie('refreshToken', refreshToken, {

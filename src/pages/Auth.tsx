@@ -172,17 +172,6 @@ export default function AuthPage() {
                       className="h-12 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white border-border/40"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Verification Document (PDF/JPG)</label>
-                    <div className="relative">
-                      <Input 
-                        type="file"
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        onChange={e => setVerificationDoc(e.target.files ? e.target.files[0] : null)}
-                        className="h-12 pt-2 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white border-border/40"
-                      />
-                    </div>
-                  </div>
                 </motion.div>
               )}
 

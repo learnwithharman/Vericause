@@ -40,14 +40,17 @@ export const campaignController = {
       const { title, description, category } = req.body;
       const goalAmount = parseFloat(req.body.goalAmount);
       
-      const imageUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+      const imageUrl = files?.image?.[0] ? `/uploads/${files.image[0].filename}` : undefined;
+      const verificationDocUrl = files?.verificationDoc?.[0] ? `/uploads/${files.verificationDoc[0].filename}` : undefined;
       
       const campaign = await campaignService.create(req.user!.id, {
         title,
         description,
         goalAmount,
         category,
-        imageUrl
+        imageUrl,
+        verificationDocUrl
       });
       res.status(201).json(campaign);
     } catch (error: unknown) {
