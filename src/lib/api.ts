@@ -1,5 +1,5 @@
 // Central API client for the VeriCause backend
-export const SERVER_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+export const SERVER_BASE = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:5000' : 'https://vericause.onrender.com');
 const API_BASE = `${SERVER_BASE}/api`;
 
 export const getImageUrl = (path: string | undefined) => {

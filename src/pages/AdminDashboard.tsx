@@ -255,7 +255,7 @@ export default function AdminDashboard() {
                             </Badge>
                             {n.verificationDocUrl && (
                               <a 
-                                href={`${import.meta.env.VITE_API_URL?.replace('/api', '')}${n.verificationDocUrl}`} 
+                                href={getImageUrl(n.verificationDocUrl)} 
                                 target="_blank" 
                                 rel="noreferrer"
                                 className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-white transition-all border border-border/40"
