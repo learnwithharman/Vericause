@@ -81,7 +81,7 @@ export const campaignService = {
         imageUrl: data.imageUrl,
         category: data.category,
         ngoId: ngo.id,
-        status: 'PENDING',
+        status: 'APPROVED',
         transparencyScore: 0,
       },
     });
