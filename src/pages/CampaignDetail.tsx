@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Users, Clock, Heart, Star, MapPin, ChevronRight, Share2, Info, CheckCircle2, ArrowRight, BarChart3, Globe, Zap } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useQuery } from "@tanstack/react-query";
-import { campaigns as campaignsApi, donations as donationsApi, auth } from "@/lib/api";
+import { campaigns as campaignsApi, donations as donationsApi, auth, getImageUrl } from "@/lib/api";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -63,12 +63,13 @@ export default function CampaignDetail() {
         id: apiCampaign.id,
         title: apiCampaign.title,
         org: apiCampaign.ngo?.organizationName ?? 'Unknown NGO',
-        image: staticCampaign.image,
+        image: apiCampaign.imageUrl ? getImageUrl(apiCampaign.imageUrl) : staticCampaign.image,
         raised: apiCampaign.raisedAmount,
         goal: apiCampaign.goalAmount,
         donors: apiCampaign._count?.donations ?? 0,
         daysLeft: 30,
         category: apiCampaign.category,
+        description: apiCampaign.description || staticCampaign.description,
         verified: apiCampaign.ngo?.verificationStatus === 'VERIFIED',
         isDemo: apiCampaign.isDemo || staticCampaign.isDemo || isHardcodedDemo,
       }
@@ -209,7 +210,7 @@ export default function CampaignDetail() {
                   <h3 className="text-2xl font-bold tracking-tight">Project Mandate</h3>
                 </div>
                 <p className="text-2xl font-medium text-slate-800 dark:text-slate-200 leading-snug tracking-tight">
-                  This initiative addresses immediate clean water access via high-efficiency solar infrastructure. Beyond the physical assets, we are establishing a sovereign community maintenance layer to ensure generational resilience.
+                  {campaign.description || "This initiative addresses immediate clean water access via high-efficiency solar infrastructure. Beyond the physical assets, we are establishing a sovereign community maintenance layer to ensure generational resilience."}
                 </p>
                 <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl font-medium">
                   Our transparent framework ensures that every unit of capital deployed is mapped to professional-grade engineering documentation and verified on-field arrival.

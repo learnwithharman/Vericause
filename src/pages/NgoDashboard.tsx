@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { motion, AnimatePresence } from "framer-motion";
 import { BarChart3, Users, FileText, PlusCircle, Upload, Eye, Activity, Terminal, Shield, ArrowUpRight, Zap, Pause, Play, Trash2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { campaigns as campaignsApi, auth } from "@/lib/api";
+import { campaigns as campaignsApi, auth, getImageUrl } from "@/lib/api";
 import { useState } from "react";
 
 const currentUser = auth.currentUser();
@@ -176,10 +176,14 @@ export default function NgoDashboard() {
                       <TableRow key={c.id} className="group hover:bg-slate-50/20 border-border/40">
                         <TableCell className="py-6 pl-8">
                           <div className="flex items-center gap-4">
-                            <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-primary italic border border-border/60 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                              {c.title.charAt(0)}
+                            <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center border border-border/60 group-hover:bg-primary/5 transition-all duration-300 overflow-hidden shrink-0">
+                                {c.imageUrl ? (
+                                  <img src={getImageUrl(c.imageUrl)} alt={c.title} className="w-full h-full object-cover" />
+                                ) : (
+                                  <span className="font-bold text-primary italic">{c.title.charAt(0)}</span>
+                                )}
                             </div>
-                            <span className="font-bold text-[15px] tracking-tight group-hover:text-primary transition-colors">{c.title}</span>
+                            <span className="font-bold text-[14px] tracking-tight group-hover:text-primary transition-colors line-clamp-1">{c.title}</span>
                           </div>
                         </TableCell>
                         <TableCell>
@@ -207,11 +211,12 @@ export default function NgoDashboard() {
                         <TableCell className="text-right pr-8">
                           <div className="flex items-center justify-end gap-3">
                             <Badge className={
-                              c.status === "ACTIVE" || c.status === "APPROVED" ? "bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-none font-bold text-[8px] uppercase tracking-widest px-2.5 py-0.5 rounded-full" : 
+                              c.status === "APPROVED" ? "bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-none font-bold text-[8px] uppercase tracking-widest px-2.5 py-0.5 rounded-full" : 
                               c.status === "PAUSED" ? "bg-amber-50 text-amber-600 border border-amber-100 shadow-none font-bold text-[8px] uppercase tracking-widest px-2.5 py-0.5 rounded-full" :
+                              c.status === "PENDING" ? "bg-blue-50 text-blue-600 border border-blue-100 shadow-none font-bold text-[8px] uppercase tracking-widest px-2.5 py-0.5 rounded-full" :
                               "bg-slate-50 text-slate-400 border border-border/60 font-bold text-[8px] uppercase tracking-widest px-2.5 py-0.5 rounded-full"
                             }>
-                              {c.status}
+                              {c.status === "PENDING" ? "REVIEW REQUIRED" : c.status}
                             </Badge>
                             
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity ml-2">

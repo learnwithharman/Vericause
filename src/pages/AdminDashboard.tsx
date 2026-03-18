@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { DollarSign, Activity, AlertTriangle, ShieldCheck, Check, X, Search, FileText, ChevronRight, Gavel, Filter, Zap, Globe, Shield, CheckCircle2, Pause, Play, Trash2 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { admin as adminApi, campaigns as campaignsApi, auth, NGO, Campaign } from "@/lib/api";
+import { admin as adminApi, campaigns as campaignsApi, auth, NGO, Campaign, getImageUrl } from "@/lib/api";
 
 const donationTrendData = [
   { name: 'Mon', value: 4200 },
@@ -335,9 +335,17 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       <div className="bg-slate-50/40 p-4 rounded-xl border border-border/40">
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Impact Target</p>
-                        <p className="font-bold text-[13px] tracking-tight mb-1">${c.goalAmount.toLocaleString()}</p>
                         <div className="text-[8px] font-bold uppercase tracking-widest text-primary">Verifiable Node</div>
+                        {c.verificationDocUrl && (
+                          <a 
+                            href={getImageUrl(c.verificationDocUrl)} 
+                            target="_blank" 
+                            rel="noreferrer"
+                            className="mt-2 flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-primary hover:underline"
+                          >
+                            <FileText className="w-3 h-3" /> View Documentation
+                          </a>
+                        )}
                       </div>
                     </div>
 

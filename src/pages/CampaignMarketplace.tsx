@@ -5,7 +5,7 @@ import { Search, SlidersHorizontal, ArrowRight, Globe } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { campaigns as campaignsApi, Campaign } from "@/lib/api";
+import { campaigns as campaignsApi, Campaign, getImageUrl } from "@/lib/api";
 
 const categories = ["All Registry", "Water", "Education", "Emergency", "Environment", "Healthcare", "Social"];
 
@@ -109,7 +109,7 @@ export default function CampaignMarketplace() {
       title: c.title,
       description: c.description || "",
       org: c.ngo?.organizationName ?? "Unknown NGO",
-      image: `https://images.unsplash.com/${photoId}?w=600&h=400&fit=crop`,
+      image: c.imageUrl ? getImageUrl(c.imageUrl) : `https://images.unsplash.com/${photoId}?w=600&h=400&fit=crop`,
       raised: c.raisedAmount,
       goal: c.goalAmount,
       donors: c._count?.donations ?? 0,

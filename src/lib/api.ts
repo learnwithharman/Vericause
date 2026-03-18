@@ -1,5 +1,12 @@
 // Central API client for the VeriCause backend
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const SERVER_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const API_BASE = `${SERVER_BASE}/api`;
+
+export const getImageUrl = (path: string | undefined) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  return `${SERVER_BASE}${path}`;
+};
 
 function getAuthHeaders() {
   const token = localStorage.getItem('vc_token');
