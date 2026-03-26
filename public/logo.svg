@@ -13,14 +13,35 @@
     </filter>
   </defs>
 
-  <g filter="url(#shadow)">
-    <!-- Background Shield -->
-    <path d="M256 48L80 104V232C80 344 158.1 448.4 256 488C353.9 448.4 432 344 432 232V104L256 48Z" fill="url(#shieldGrad)" />
-  </g>
-  
-  <!-- Heart Symbol Overlay -->
-  <path d="M256 348C256 348 144 268 144 196C144 156.2 176.2 124 216 124C238.6 124 248.8 134.8 256 144.6C263.2 134.8 273.4 124 296 124C335.8 124 368 156.2 368 196C368 268 256 348 256 348Z" fill="white" opacity="0.15"/>
+  <style>
+    .floating-shield {
+      transform-origin: center;
+      animation: float 4s ease-in-out infinite;
+    }
+    .check-pulse {
+      transform-origin: center;
+      animation: pulse 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+  </style>
 
-  <!-- Checkmark -->
-  <path d="M216 296L152 232L174.6 209.4L216 250.7L337.4 129.4L360 152L216 296Z" fill="url(#checkGrad)" stroke="white" stroke-width="4" stroke-linejoin="round"/>
+  <g class="floating-shield">
+    <g filter="url(#shadow)">
+      <!-- Background Shield -->
+      <path d="M256 48L80 104V232C80 344 158.1 448.4 256 488C353.9 448.4 432 344 432 232V104L256 48Z" fill="url(#shieldGrad)" />
+    </g>
+    
+    <!-- Heart Symbol Overlay -->
+    <path d="M256 348C256 348 144 268 144 196C144 156.2 176.2 124 216 124C238.6 124 248.8 134.8 256 144.6C263.2 134.8 273.4 124 296 124C335.8 124 368 156.2 368 196C368 268 256 348 256 348Z" fill="white" opacity="0.15"/>
+
+    <!-- Checkmark -->
+    <path class="check-pulse" d="M216 296L152 232L174.6 209.4L216 250.7L337.4 129.4L360 152L216 296Z" fill="url(#checkGrad)" stroke="white" stroke-width="4" stroke-linejoin="round"/>
+  </g>
 </svg>
