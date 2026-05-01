@@ -96,3 +96,7 @@ To build the backend:
 cd server
 npm run build
 ```
+
+## Contact
+
+- **Instagram**: [@ded.lecter](https://www.instagram.com/ded.lecter/)
