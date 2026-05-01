@@ -129,72 +129,134 @@ export default function LandingPage() {
         </motion.div>
       </div>
 
-      {/* Protocol Background Engine */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <motion.div 
-          style={{ y: backgroundY }}
-          className="absolute inset-0 protocol-grid opacity-[0.03] dark:opacity-[0.08]" 
-        />
-        <div className="absolute inset-0 protocol-grid-dots opacity-[0.15] dark:opacity-[0.2]" />
-        <div className="impact-node w-96 h-96 top-[5%] left-[-5%] bg-primary/5 dark:bg-primary/10" style={{ "--duration": "25s" } as React.CSSProperties} />
-        <div className="impact-node w-[600px] h-[600px] bottom-[10%] right-[-10%] bg-indigo-500/5 dark:bg-indigo-500/10" style={{ "--duration": "35s" } as React.CSSProperties} />
-      </div>
+      {/* High-Value SaaS Background */}
+      <div className="absolute inset-0 z-0 pointer-events-none bg-grid-slate-900/[0.04] dark:bg-grid-slate-100/[0.02] bg-[size:50px_50px]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] opacity-40 dark:opacity-30 pointer-events-none" style={{ background: 'radial-gradient(circle at top center, rgba(99, 102, 241, 0.25) 0%, rgba(168, 85, 247, 0.1) 40%, transparent 70%)' }} />
+      <div className="absolute top-1/4 -left-1/4 w-[800px] h-[800px] opacity-20 pointer-events-none blur-[120px]" style={{ background: 'radial-gradient(circle, rgba(45, 212, 191, 0.4) 0%, transparent 60%)' }} />
 
       <div className="relative z-10">
-        {/* Hero Section - Condensed */}
-        <section className="relative h-[85vh] flex items-center justify-center pt-16 pb-8 overflow-hidden">
-          <motion.div 
-            style={{ opacity: heroOpacity, scale: heroScale }}
-            className="container mx-auto px-6"
-          >
-            <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
+        {/* Hero Section - SaaS Left/Right Layout */}
+        <section className="relative min-h-[90vh] flex items-center pt-24 pb-12 overflow-hidden">
+          <div className="container mx-auto px-6">
+            <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
               <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 dark:bg-white/5 border border-white/20 dark:border-white/10 backdrop-blur-md shadow-sm mb-8 group cursor-pointer hover:border-primary/30 transition-all"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="flex flex-col items-start text-left z-10"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-foreground/70">Autonomous Verification Protocol v2.5.0</span>
-                <ArrowRight className="w-3 h-3 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/5 dark:bg-primary/10 border border-primary/10 dark:border-primary/20 text-primary mb-8 text-xs font-semibold">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                  </span>
+                  VeriCause 2.5 is now available
+                </div>
+
+                <h1 className="text-6xl lg:text-[5.5rem] font-display font-black tracking-tighter leading-[1.05] text-foreground mb-6 drop-shadow-sm">
+                  Transparent <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-400 drop-shadow-[0_0_30px_rgba(99,102,241,0.2)]">
+                    Impact Verification.
+                  </span>
+                </h1>
+
+                <p className="text-lg text-muted-foreground max-w-lg leading-relaxed mb-10">
+                  The institutional standard for verified philanthropy. We build the infrastructure to ensure every donation is tracked, transparent, and transformative.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-5 w-full sm:w-auto">
+                  <Button asChild size="lg" className="h-14 px-10 rounded-2xl bg-foreground text-background font-bold shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgba(99,102,241,0.4)] hover:scale-105 transition-all duration-300 dark:bg-primary dark:text-primary-foreground text-lg">
+                    <Link to="/campaigns" className="flex items-center">Get Started <ArrowRight className="w-5 h-5 ml-2" /></Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="h-14 px-10 rounded-2xl font-bold border-border/60 hover:bg-accent/50 hover:border-border hover:scale-105 backdrop-blur-sm transition-all duration-300 text-lg">
+                    <Link to="/ngo-dashboard">Institutional Access</Link>
+                  </Button>
+                </div>
               </motion.div>
 
-              <h1 className="text-6xl md:text-9xl font-display font-black tracking-tighter leading-[0.8] mb-8">
-                <div className="text-reveal-mask">
-                  <motion.span initial={{ y: "110%" }} animate={{ y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} className="block">
-                    <ShinyText text="Transparent" speed={3} color="hsl(var(--foreground))" shineColor="hsl(var(--primary))" spread={90} />
-                  </motion.span>
-                </div>
-                <div className="text-reveal-mask">
-                  <motion.span initial={{ y: "110%" }} animate={{ y: 0 }} transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} className="block">
-                    <ShinyText text="Impact." speed={3} color="hsl(var(--primary))" shineColor="hsl(var(--foreground))" spread={90} />
-                  </motion.span>
-                </div>
-              </h1>
-
-              <motion.p 
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                className="text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed font-normal mb-10"
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="relative hidden lg:block"
               >
-                The institutional standard for cryptographically verified philanthropy. Building the world's first <span className="protocol-accent font-bold text-foreground">sovereign trust layer</span> for global giving.
-              </motion.p>
+                {/* Web3 / Futuristic SaaS Illustration */}
+                <div className="relative w-full aspect-square max-w-lg mx-auto mt-10 lg:mt-0">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/20 via-purple-500/10 to-cyan-400/20 rounded-full blur-[80px] animate-pulse" style={{ animationDuration: '4s' }} />
+                  
+                  <motion.div 
+                    whileHover={{ scale: 1.02, rotateY: 5, rotateX: -5 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    style={{ perspective: 1000 }}
+                    className="relative h-full w-full elite-card bg-white/40 dark:bg-[#0A0A0A]/60 backdrop-blur-2xl border border-white/40 dark:border-white/10 p-8 rounded-[2.5rem] flex flex-col justify-between shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_60px_-15px_rgba(99,102,241,0.2)]"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent dark:from-white/5 dark:to-transparent rounded-[2.5rem] pointer-events-none" />
+                    
+                    <div className="flex items-center justify-between mb-6 relative z-10">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                          <Activity className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-foreground">Verification Node</div>
+                          <div className="text-xs text-muted-foreground font-medium">Syncing blocks...</div>
+                        </div>
+                      </div>
+                      <span className="text-xs font-black text-cyan-500 bg-cyan-500/10 px-3 py-1.5 rounded-full uppercase tracking-wider border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.3)] flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
+                        Live
+                      </span>
+                    </div>
 
-              <motion.div 
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                className="flex flex-col sm:flex-row gap-4"
-              >
-                <Button asChild size="lg" className="h-14 px-10 rounded-2xl bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-xl hover:scale-[1.02] transition-all">
-                  <Link to="/campaigns" className="flex items-center">Enter Registry <Zap className="w-4 h-4 ml-2 fill-white" /></Link>
-                </Button>
-                <Button asChild size="lg" variant="ghost" className="h-14 px-10 rounded-2xl text-sm font-bold bg-white/40 dark:bg-white/5 backdrop-blur-sm border border-border/40 hover:bg-white dark:hover:bg-white/10 transition-all">
-                  <Link to="/ngo-dashboard">Network Node</Link>
-                </Button>
+                    <div className="space-y-5 relative z-10 flex-grow flex flex-col justify-center">
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-end">
+                          <div className="text-3xl font-display font-black tracking-tight text-foreground">$24.5M</div>
+                          <div className="text-sm font-bold text-emerald-500 mb-1">+12.4%</div>
+                        </div>
+                        <div className="h-1.5 w-full bg-border/50 rounded-full overflow-hidden">
+                          <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: "75%" }}
+                            transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
+                            className="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 rounded-full" 
+                          />
+                        </div>
+                        <div className="flex justify-between text-xs text-muted-foreground font-semibold uppercase tracking-wider mt-2">
+                          <span>Allocated</span>
+                          <span>Verified</span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 mt-6">
+                        {[1, 2].map((i) => (
+                          <div key={i} className="bg-background/50 dark:bg-black/50 p-4 rounded-2xl border border-white/20 dark:border-white/5">
+                            <div className="h-2 w-1/3 bg-muted rounded-full mb-3" />
+                            <div className="h-3 w-2/3 bg-foreground/20 rounded-full" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                  
+                  {/* Floating Elements */}
+                  <motion.div 
+                    animate={{ y: [0, -15, 0] }}
+                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+                    className="absolute -bottom-8 -left-8 elite-card bg-background/80 backdrop-blur-xl p-5 rounded-2xl shadow-2xl border border-white/20 dark:border-white/10 flex items-center gap-4 z-20"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-400 to-cyan-400 flex items-center justify-center shadow-lg shadow-emerald-400/20">
+                      <ShieldCheck className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mb-0.5">Network Status</p>
+                      <p className="text-base font-black text-foreground">Zero Leakage</p>
+                    </div>
+                  </motion.div>
+                </div>
               </motion.div>
             </div>
-          </motion.div>
+          </div>
           
           <motion.div 
             initial={{ opacity: 0 }}
@@ -216,14 +278,14 @@ export default function LandingPage() {
               className="grid grid-cols-1 md:grid-cols-3 gap-px bg-primary/10 border border-primary/10 rounded-[2rem] overflow-hidden backdrop-blur-3xl shadow-xl"
             >
               {stats.map((s, i) => (
-                <div key={i} className="bg-white/60 dark:bg-slate-900/60 p-8 flex flex-col items-center group transition-all duration-700">
-                  <div className="w-12 h-12 rounded-xl bg-white dark:bg-white/10 mb-6 flex items-center justify-center text-primary shadow-sm group-hover:bg-primary group-hover:text-white transition-all duration-500">
-                    <s.icon className="w-6 h-6" />
+                <div key={i} className="bg-white/60 dark:bg-[#0A0A0A]/60 p-10 flex flex-col items-center group transition-all duration-700 hover:bg-white dark:hover:bg-[#111111]">
+                  <div className="w-14 h-14 rounded-2xl bg-white dark:bg-white/5 mb-6 flex items-center justify-center text-primary shadow-sm group-hover:bg-gradient-to-tr group-hover:from-indigo-500 group-hover:to-cyan-400 group-hover:text-white transition-all duration-500 group-hover:scale-110">
+                    <s.icon className="w-7 h-7" />
                   </div>
-                  <div className="text-4xl lg:text-5xl font-display font-bold tracking-tighter text-foreground mb-1">
+                  <div className="text-5xl lg:text-6xl font-display font-black tracking-tighter text-foreground mb-2 drop-shadow-sm group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-500 group-hover:to-cyan-400 transition-all">
                     {s.val}{s.suffix}
                   </div>
-                  <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground group-hover:text-primary transition-colors">{s.label}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground group-hover:text-foreground transition-colors">{s.label}</div>
                 </div>
               ))}
             </motion.div>
@@ -241,23 +303,23 @@ export default function LandingPage() {
 
             <div className="grid lg:grid-cols-3 gap-6 pt-10">
               {[
-                { icon: Shield, title: "Protocol Audits", desc: "Automated verification nodes that audit fund allocation every second." },
-                { icon: Globe, title: "Global Settlement", desc: "Real-time borderless settlement of capital directly to project endpoints." },
-                { icon: Activity, title: "Telemetry Proof", desc: "Granular, live data feeds documenting real-world impact as it happens." },
+                { icon: Shield, title: "Protocol Audits", desc: "Automated verification that audits fund allocation with absolute certainty." },
+                { icon: Globe, title: "Global Settlement", desc: "Real-time borderless settlement of capital directly to endpoints." },
+                { icon: Activity, title: "Telemetry Proof", desc: "Granular data feeds documenting real-world impact as it happens." },
               ].map((f, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ delay: i * 0.1, duration: 0.6 }}
-                  className="elite-card p-10 group bg-white/40 dark:bg-white/5 backdrop-blur-md border-white/20 transition-all hover:scale-[1.01]"
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.5 }}
+                  className="p-8 group bg-background border border-border rounded-xl transition-all hover:border-primary/30 hover:shadow-sm"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-white dark:bg-white/5 border border-border/50 dark:border-white/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-sm mb-8">
-                    <f.icon className="w-7 h-7" />
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-6">
+                    <f.icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 tracking-tight text-foreground">{f.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed font-normal">{f.desc}</p>
+                  <h3 className="text-lg font-semibold mb-2 text-foreground">{f.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed text-sm">{f.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -274,10 +336,10 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 className="max-w-lg"
               >
-                <span className="text-[9px] font-bold tracking-[0.3em] uppercase text-primary mb-4 block">Open Source Trust</span>
-                <h2 className="text-4xl md:text-6xl font-display font-bold tracking-tighter leading-tight text-foreground">Live Impact <br />Registries.</h2>
+                <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-cyan-500 mb-4 block">Open Source Trust</span>
+                <h2 className="text-5xl md:text-7xl font-display font-black tracking-tighter leading-[1.05] text-foreground">Live Impact <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-cyan-400">Registries.</span></h2>
               </motion.div>
-              <Button asChild variant="outline" className="h-12 border-primary/40 text-primary hover:bg-primary hover:text-white rounded-xl px-8 transition-all font-bold text-xs">
+              <Button asChild variant="outline" className="h-14 border-indigo-500/30 text-foreground hover:bg-gradient-to-r hover:from-indigo-500 hover:to-cyan-400 hover:text-white hover:border-transparent rounded-2xl px-8 transition-all duration-300 font-bold text-sm shadow-sm hover:shadow-[0_0_20px_rgba(99,102,241,0.3)]">
                 <Link to="/campaigns" className="flex items-center">Access Data Protocol <ArrowRight className="w-4 h-4 ml-2" /></Link>
               </Button>
             </div>
@@ -351,32 +413,26 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Global CTA - Refined Blue Panel */}
-        <section className="py-16 px-6 md:px-20">
+        {/* Global CTA - Refined Clean Panel */}
+        <section className="py-32 px-6 md:px-20 border-t border-white/5 bg-background relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-indigo-500/5 pointer-events-none" />
           <motion.div 
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="max-w-6xl mx-auto rounded-[3rem] bg-indigo-600 dark:bg-primary p-12 md:p-20 relative overflow-hidden group text-center shadow-2xl transition-all hover:shadow-primary/20"
+            className="max-w-4xl mx-auto text-center relative z-10"
           >
-            {/* Geometric Detail Layer */}
-            <div className="absolute inset-0 protocol-grid opacity-[0.15]" />
-            <CurvedLoop marqueeText="Vericause 100% transparent donation platform" />
-            <div className="absolute inset-x-0 top-0 h-px bg-white/10" />
-            <div className="absolute bottom-4 right-8 text-[8px] font-mono text-white/30 uppercase tracking-[0.5em] hidden md:block">PROTOCOL_ACCESS_GRANTED // SECURE_ALLOCATION</div>
-            <div className="absolute top-4 left-8 text-[8px] font-mono text-white/30 uppercase tracking-[0.5em] hidden md:block">VERICAUSE_ORIGIN_NODE // 2026_COLLECTION</div>
-
-            <div className="relative">
-              <MotivationalQuoteEngine />
-              <h2 className="text-4xl md:text-7xl font-display font-black tracking-tighter text-white mb-10 leading-[0.9]">Redefine your <br />impact legacy.</h2>
-              <div className="flex flex-col sm:flex-row gap-5 justify-center mt-12">
-                <Button asChild className="h-16 px-12 rounded-2xl bg-white text-indigo-600 dark:text-primary text-base font-bold shadow-xl hover:bg-slate-50 hover:scale-[1.05] transition-all group">
-                  <Link to="/campaigns" className="flex items-center">Start Integration <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" /></Link>
-                </Button>
-                <Button asChild variant="ghost" className="h-16 px-12 rounded-2xl border border-white/20 text-white text-base font-bold hover:bg-white/10 transition-all">
-                  <Link to="/ngo-dashboard">Institutional Access</Link>
-                </Button>
-              </div>
+            <h2 className="text-5xl md:text-7xl font-display font-black tracking-tighter text-foreground mb-8">Ready to redefine <br className="hidden sm:block" /><span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-cyan-400">your impact?</span></h2>
+            <p className="text-muted-foreground text-xl mb-12 max-w-xl mx-auto font-medium">
+              Join thousands of organizations using VeriCause to track and verify their global impact.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-5 justify-center">
+              <Button asChild size="lg" className="h-14 px-10 rounded-2xl bg-foreground text-background font-bold shadow-xl hover:shadow-[0_0_30px_rgba(99,102,241,0.3)] hover:scale-105 transition-all duration-300 dark:bg-primary dark:text-primary-foreground text-lg">
+                <Link to="/campaigns" className="flex items-center">Get Started Today <ArrowRight className="w-5 h-5 ml-2" /></Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="h-14 px-10 rounded-2xl font-bold border-border/60 hover:bg-accent/50 hover:border-border hover:scale-105 transition-all duration-300 text-lg">
+                <Link to="/ngo-dashboard">Contact Sales</Link>
+              </Button>
             </div>
           </motion.div>
         </section>
