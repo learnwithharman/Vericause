@@ -28,17 +28,17 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(226 100% 50%)", // High-end Digital Blue
-          foreground: "hsl(0 0% 100%)",
-          50: "hsl(226 100% 98%)",
-          100: "hsl(226 100% 95%)",
-          200: "hsl(226 100% 90%)",
-          600: "hsl(226 100% 45%)",
-          700: "hsl(226 100% 35%)",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+          50: "hsl(256 100% 98%)",
+          100: "hsl(256 100% 95%)",
+          200: "hsl(256 100% 90%)",
+          600: "hsl(256 100% 45%)",
+          700: "hsl(256 100% 35%)",
         },
         secondary: {
-          DEFAULT: "hsl(210 20% 98%)",
-          foreground: "hsl(224 30% 12%)",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
         trust: {
           emerald: "hsl(150 100% 35%)", // Deeper, more "money" green
@@ -56,20 +56,20 @@ export default {
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(220 15% 94%)",
-          foreground: "hsl(220 10% 40%)",
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(160 60% 45%)",
-          foreground: "hsl(0 0% 100%)",
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "hsl(0 0% 100%)",
-          foreground: "hsl(224 30% 12%)",
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
