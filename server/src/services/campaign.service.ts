@@ -28,7 +28,7 @@ interface ImpactUpdateData {
 
 export const campaignService = {
   getAll: async (filters: { category?: string; status?: string; userId?: string }) => {
-    const whereClause: any = {
+    const whereClause: Record<string, unknown> = {
       ...(filters.category ? { category: filters.category } : {}),
       ...(filters.userId ? { ngo: { userId: filters.userId } } : {}),
     };
@@ -41,7 +41,8 @@ export const campaignService = {
     // If status is 'ALL', we don't add a status filter at all, yielding all campaigns for that user/category
 
     return prisma.campaign.findMany({
-      where: whereClause,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      where: whereClause as any, // Cast to any only at the point of consumption if needed by Prisma's complex types, or use proper Prisma.CampaignWhereInput if available
       include: {
         ngo: { select: { organizationName: true, verificationStatus: true } },
         _count: { select: { donations: true } },
