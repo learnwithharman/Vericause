@@ -14,6 +14,12 @@ import { donations as donationsApi, auth } from "@/lib/api";
 
 
 
+interface DemoDonation {
+  amount: number;
+  campaignTitle: string;
+  date: string;
+}
+
 const impactUpdates = [
   { campaign: "Clean Water Project", date: "4h ago", text: "Infrastructure deployment validated by node #42.", icon: Activity },
   { campaign: "Education Initiative", date: "2d ago", text: "Phase 1 structural audit complete.", icon: MapPin },
@@ -31,18 +37,18 @@ export default function DonorDashboard() {
   const totalRealRaised = myDonations.reduce((sum, d) => sum + d.amount, 0);
   
   // Demo Data Integration
-  const demoDonations = JSON.parse(localStorage.getItem('vc_demo_donations') || '[]');
-  const totalDemoRaised = demoDonations.reduce((sum: any, d: any) => sum + d.amount, 0);
+  const demoDonations: DemoDonation[] = JSON.parse(localStorage.getItem('vc_demo_donations') || '[]');
+  const totalDemoRaised = demoDonations.reduce((sum: number, d: DemoDonation) => sum + d.amount, 0);
   
   const totalDeployed = totalRealRaised + totalDemoRaised;
   const campaignsSupported = new Set([
     ...myDonations.map(d => d.campaign?.title),
-    ...demoDonations.map((d: any) => d.campaignTitle)
+    ...demoDonations.map((d: DemoDonation) => d.campaignTitle)
   ]).size;
 
   const allDonations = [
     ...myDonations.map(d => ({ ...d, isDemo: false })),
-    ...demoDonations.map((d: any) => ({
+    ...demoDonations.map((d: DemoDonation) => ({
       id: `demo-${Math.random()}`,
       amount: d.amount,
       status: "COMPLETED",
@@ -108,7 +114,7 @@ export default function DonorDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {allDonations.map((d: any, i) => (
+                    {allDonations.map((d, i) => (
                       <TableRow key={i} className="group hover:bg-slate-50/20 border-border/40">
                         <TableCell className="py-6 pl-8">
                           <div className="flex items-center gap-4">
