@@ -19,13 +19,15 @@ export function Navbar() {
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
     localStorage.setItem("vc_theme", dark ? "dark" : "light");
-    
+  }, [dark]);
+
+  useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [dark]);
+  }, []);
 
   const links = [
     { to: "/campaigns", label: "Explore" },
@@ -69,15 +71,16 @@ export function Navbar() {
                   <svg viewBox="0 0 24 24" className="w-6 h-6 z-10" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <motion.path
                       initial={{ pathLength: 0 }}
-                      animate={{ pathLength: 1 }}
-                      transition={{ duration: 1.5, ease: "easeInOut" }}
+                      animate={{ pathLength: 1, rotate: 360 }}
+                      transition={{ 
+                        pathLength: { duration: 1.5, ease: "easeInOut" },
+                        rotate: { repeat: Infinity, duration: 10, ease: "linear" }
+                      }}
                       d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
                       stroke="url(#gradient-outer)"
                       strokeWidth="1.5"
                       strokeDasharray="4 4"
                       className="origin-center"
-                      animate={{ rotate: 360 }}
-                      transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
                     />
                     <motion.path
                       initial={{ pathLength: 0, opacity: 0 }}
@@ -207,9 +210,36 @@ export function Navbar() {
                   </Link>
                 </motion.div>
               ))}
-              <div className="mt-4 pt-4 border-t border-border/40 grid grid-cols-2 gap-3">
-                <Button variant="outline" className="rounded-2xl h-11 text-xs font-bold">Sign In</Button>
-                <Button className="rounded-2xl h-11 text-xs font-bold bg-primary text-white">Join Now</Button>
+              <div className="mt-4 pt-4 border-t border-border/40">
+                {user ? (
+                  <div className="flex flex-col gap-2">
+                    <div className="px-5 py-3 rounded-2xl bg-accent/50 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <User className="w-4 h-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-foreground">{user.name}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{user.role}</p>
+                      </div>
+                    </div>
+                    <Button 
+                      onClick={handleLogout} 
+                      variant="outline" 
+                      className="rounded-2xl h-12 text-sm font-bold text-red-500 border-red-100 hover:bg-red-50 hover:text-red-600 transition-all"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" /> Logout Session
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button asChild variant="outline" className="rounded-2xl h-11 text-xs font-bold">
+                      <Link to="/auth">Sign In</Link>
+                    </Button>
+                    <Button asChild className="rounded-2xl h-11 text-xs font-bold bg-primary text-white">
+                      <Link to="/auth">Join Now</Link>
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>
