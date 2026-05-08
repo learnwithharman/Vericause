@@ -13,7 +13,6 @@ import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { campaigns as campaignsApi, Campaign } from "@/lib/api";
-import CurvedLoop from "@/components/CurvedLoop";
 
 const stats = [
   { val: 12, suffix: "M", label: "Capital Tracked", icon: Target },
