@@ -134,8 +134,9 @@ async function runTests() {
     console.log('\n✨ ALL FUNCTIONS VERIFIED SUCCESSFULLY ✨');
     process.exit(0);
 
-  } catch (error: any) {
-    console.error('\n❌ VERIFICATION FAILED:', error.message);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('\n❌ VERIFICATION FAILED:', err.message || 'Unknown error');
     process.exit(1);
   }
 }
