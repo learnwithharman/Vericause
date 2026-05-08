@@ -19,9 +19,17 @@ import { motion } from "framer-motion";
 
 const queryClient = new QueryClient();
 
+interface DonationEvent extends CustomEvent {
+  detail: {
+    amount: number;
+    title: string;
+    name: string;
+  };
+}
+
 const App = () => {
   useEffect(() => {
-    const handleDonationEvent = (e: any) => {
+    const handleDonationEvent = (e: DonationEvent) => {
       const { amount, title, name } = e.detail;
       toast.custom((id) => (
         <motion.div 
